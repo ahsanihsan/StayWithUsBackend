@@ -1,4 +1,4 @@
-const User = require("../models/user.model.js");
+const User = require("../models/User.model.js");
 const helper = require("../helper/passwords");
 const Joi = require("@hapi/joi");
 
@@ -12,6 +12,15 @@ const userSchema = Joi.object({
   total_ads: Joi.number(),
   profile_pictrue: Joi.string()
 });
+
+const reviewObjectSchema = {
+  path: "reviews",
+  select: { _id: 1, rating: 1, comment: 1, createdAt: 1 },
+  populate: {
+    path: "author",
+    select: { _id: 1, name: 1 }
+  }
+};
 
 // Create and Save a new user
 exports.create = async (req, res) => {
@@ -48,6 +57,7 @@ exports.create = async (req, res) => {
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   User.find()
+    .populate(reviewObjectSchema)
     .then(data => {
       res.send({
         success: true,
@@ -65,6 +75,7 @@ exports.findAll = (req, res) => {
 // Find a single user with a userId
 exports.findOne = (req, res) => {
   User.findById(req.params.userId)
+    .populate(reviewObjectSchema)
     .then(data => {
       res.send({
         success: true,

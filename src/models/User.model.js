@@ -9,7 +9,8 @@ const UserSchema = mongoose.Schema(
     phone_number: String,
     active_ads: Number,
     total_ads: Number,
-    profile_pictrue: String
+    profile_pictrue: String,
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }]
   },
   {
     timestamps: true

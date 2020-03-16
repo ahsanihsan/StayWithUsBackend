@@ -13,6 +13,7 @@ const port = configs.PORT;
 
 // Routes
 require("./src/routes/user.routes.js")(app);
+require("./src/routes/review.routes.js")(app);
 
 mongoose.Promise = global.Promise;
 mongoose

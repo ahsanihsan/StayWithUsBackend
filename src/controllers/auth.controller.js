@@ -1,4 +1,4 @@
-const User = require("../models/user.model.js");
+const User = require("../models/User.model.js");
 const Joi = require("@hapi/joi");
 const helper = require("../helper/passwords");
 const jwt = require("../helper/jsonwebtoken");
