@@ -59,6 +59,10 @@ exports.findAll = (req, res) => {
   User.find()
     .populate(reviewObjectSchema)
     .then(data => {
+      console.log("********");
+      console.log(req.current_user);
+      console.log("********");
+
       res.send({
         success: true,
         message: data

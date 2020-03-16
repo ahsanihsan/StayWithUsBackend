@@ -1,11 +1,8 @@
 module.exports = app => {
   const review = require("../controllers/reviews.controller.js");
 
-  // Create a new user
+  // Create a new review
   app.post("/reviews", review.create);
-
-  // // Login a user
-  // app.post("/login", auth.login);
 
   // Retrieve all reviews
   app.get("/reviews", review.findAll);

@@ -31,7 +31,7 @@ exports.checkToken = (req, res, next) => {
           message: "Token is not valid"
         });
       } else {
-        req.decoded = decoded;
+        req.current_user = decoded;
         next();
       }
     });
