@@ -65,7 +65,7 @@ exports.create = async (req, res) => {
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   Review.find()
-    .populate("user")
+    .populate("user author")
     .then(data => {
       res.send({
         success: true,

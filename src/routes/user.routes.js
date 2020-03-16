@@ -1,6 +1,7 @@
 module.exports = app => {
   const user = require("../controllers/user.controller.js");
   const auth = require("../controllers/auth.controller.js");
+  const JWT = require("../helper/jsonwebtoken");
 
   // Create a new user
   app.post("/users", user.create);
@@ -9,14 +10,14 @@ module.exports = app => {
   app.post("/login", auth.login);
 
   // Retrieve all users
-  app.get("/users", user.findAll);
+  app.get("/users", JWT.checkToken, user.findAll);
 
   // Retrieve a single user with userId
-  app.get("/users/:userId", user.findOne);
+  app.get("/users/:userId", JWT.checkToken, user.findOne);
 
   // Update a user with userId
-  app.put("/users/:userId", user.update);
+  app.put("/users/:userId", JWT.checkToken, user.update);
 
   // Delete a user with userId
-  app.delete("/users/:userId", user.delete);
+  app.delete("/users/:userId", JWT.checkToken, user.delete);
 };
