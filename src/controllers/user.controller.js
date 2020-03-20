@@ -28,29 +28,40 @@ exports.create = async (req, res) => {
   if (response && response.error) {
     return res.status(400).send(response.error);
   } else {
-    let hashPassword = await helper.encryptPassword(req.body.password);
-    if (hashPassword) {
-      req.body.password = hashPassword;
-      let user = new User(req.body);
-      user
-        .save()
-        .then(data => {
-          res.send({
-            success: true,
-            message: "You have been registered with us successfuly"
-          });
-        })
-        .catch(err => {
-          res.status(500).send({
-            message: err.message || "Some error occurred while signing you up."
-          });
+    User.find({ email: req.body.email }).then(async userRecord => {
+      if (userRecord && userRecord.length > 0) {
+        res.status(500).send({
+          success: true,
+          message:
+            "You are already registered with us! Please try resetting your password."
         });
-    } else {
-      res.status(500).send({
-        success: false,
-        message: "Some error occurred while signing you up."
-      });
-    }
+      } else {
+        let hashPassword = await helper.encryptPassword(req.body.password);
+        if (hashPassword) {
+          req.body.password = hashPassword;
+          let user = new User(req.body);
+          user
+            .save()
+            .then(data => {
+              res.send({
+                success: true,
+                message: "You have been registered with us successfuly"
+              });
+            })
+            .catch(err => {
+              res.status(500).send({
+                message:
+                  err.message || "Some error occurred while signing you up."
+              });
+            });
+        } else {
+          res.status(500).send({
+            success: false,
+            message: "Some error occurred while signing you up."
+          });
+        }
+      }
+    });
   }
 };
 
@@ -59,10 +70,6 @@ exports.findAll = (req, res) => {
   User.find()
     .populate(reviewObjectSchema)
     .then(data => {
-      console.log("********");
-      console.log(req.current_user);
-      console.log("********");
-
       res.send({
         success: true,
         message: data

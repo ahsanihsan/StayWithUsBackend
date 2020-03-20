@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
         if (authorised) {
           let token = jwt.generateJWT(response);
           return res.send({
-            success: false,
+            success: true,
             message: token
           });
         } else {
