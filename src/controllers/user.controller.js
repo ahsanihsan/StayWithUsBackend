@@ -76,6 +76,9 @@ exports.findAll = (req, res) => {
       });
     })
     .catch(err => {
+      console.log("*******");
+      console.log(err);
+      console.log("*******");
       res.status(500).send({
         message:
           err.message || "Some error occurred while fetching the data for you."
