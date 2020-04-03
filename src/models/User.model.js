@@ -13,12 +13,12 @@ const UserSchema = mongoose.Schema(
     profile_pictrue: {
       type: String,
       default:
-        "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200"
+        "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200",
     },
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }]
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
