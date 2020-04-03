@@ -1,10 +1,10 @@
 var jwt = require("jsonwebtoken");
 const configs = require("../configs/config");
 
-exports.generateJWT = data => {
+exports.generateJWT = (data) => {
   var token = jwt.sign(
     {
-      data
+      data,
     },
     configs.PRIVATE_KEY,
     { expiresIn: configs.EXPIRY_TIME }
@@ -12,7 +12,7 @@ exports.generateJWT = data => {
   return token;
 };
 
-exports.decodeJWT = token => {
+exports.decodeJWT = (token) => {
   var token = jwt.decode(token);
   return token;
 };
@@ -26,9 +26,9 @@ exports.checkToken = (req, res, next) => {
   if (token) {
     jwt.verify(token, configs.PRIVATE_KEY, (err, decoded) => {
       if (err) {
-        return res.json({
+        return res.status(401).json({
           success: false,
-          message: "Token is not valid"
+          message: "Token is not valid",
         });
       } else {
         req.current_user = decoded;
@@ -38,7 +38,7 @@ exports.checkToken = (req, res, next) => {
   } else {
     return res.json({
       success: false,
-      message: "Auth token is not supplied"
+      message: "Auth token is not supplied",
     });
   }
 };

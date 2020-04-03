@@ -10,7 +10,7 @@ const userSchema = Joi.object({
   phone_number: Joi.string().required(),
   active_ads: Joi.number(),
   total_ads: Joi.number(),
-  profile_pictrue: Joi.string()
+  profile_pictrue: Joi.string(),
 });
 
 const reviewObjectSchema = {
@@ -18,8 +18,8 @@ const reviewObjectSchema = {
   select: { _id: 1, rating: 1, comment: 1, createdAt: 1 },
   populate: {
     path: "author",
-    select: { _id: 1, name: 1 }
-  }
+    select: { _id: 1, name: 1, psn: 1 },
+  },
 };
 
 // Create and Save a new user
@@ -28,12 +28,12 @@ exports.create = async (req, res) => {
   if (response && response.error) {
     return res.status(400).send(response.error);
   } else {
-    User.find({ email: req.body.email }).then(async userRecord => {
+    User.find({ email: req.body.email }).then(async (userRecord) => {
       if (userRecord && userRecord.length > 0) {
         res.status(500).send({
           success: true,
           message:
-            "You are already registered with us! Please try resetting your password."
+            "You are already registered with us! Please try resetting your password.",
         });
       } else {
         let hashPassword = await helper.encryptPassword(req.body.password);
@@ -42,22 +42,22 @@ exports.create = async (req, res) => {
           let user = new User(req.body);
           user
             .save()
-            .then(data => {
+            .then((data) => {
               res.send({
                 success: true,
-                message: "You have been registered with us successfuly"
+                message: "You have been registered with us successfuly",
               });
             })
-            .catch(err => {
+            .catch((err) => {
               res.status(500).send({
                 message:
-                  err.message || "Some error occurred while signing you up."
+                  err.message || "Some error occurred while signing you up.",
               });
             });
         } else {
           res.status(500).send({
             success: false,
-            message: "Some error occurred while signing you up."
+            message: "Some error occurred while signing you up.",
           });
         }
       }
@@ -69,19 +69,19 @@ exports.create = async (req, res) => {
 exports.findAll = (req, res) => {
   User.find()
     .populate(reviewObjectSchema)
-    .then(data => {
+    .then((data) => {
       res.send({
         success: true,
-        message: data
+        message: data,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       console.log("*******");
       console.log(err);
       console.log("*******");
       res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you."
+          err.message || "Some error occurred while fetching the data for you.",
       });
     });
 };
@@ -90,16 +90,16 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   User.findById(req.params.userId)
     .populate(reviewObjectSchema)
-    .then(data => {
+    .then((data) => {
       res.send({
         success: true,
-        message: data
+        message: data,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you."
+          err.message || "Some error occurred while fetching the data for you.",
       });
     });
 };
@@ -107,16 +107,16 @@ exports.findOne = (req, res) => {
 // Update a user identified by the userId in the request
 exports.update = (req, res) => {
   User.findByIdAndUpdate(req.params.userId, req.body)
-    .then(data => {
+    .then((data) => {
       res.send({
         success: true,
-        message: "User updated successfully"
+        message: "User updated successfully",
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you."
+          err.message || "Some error occurred while fetching the data for you.",
       });
     });
 };
@@ -124,16 +124,16 @@ exports.update = (req, res) => {
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
   User.findByIdAndDelete(req.params.userId)
-    .then(data => {
+    .then((data) => {
       res.send({
         success: true,
-        message: "User deleted successfully"
+        message: "User deleted successfully",
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you."
+          err.message || "Some error occurred while fetching the data for you.",
       });
     });
 };
