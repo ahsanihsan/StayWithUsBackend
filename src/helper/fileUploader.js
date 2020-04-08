@@ -20,3 +20,16 @@ module.exports = uploadImage = (file) =>
       })
       .end(buffer);
   });
+
+module.exports = deleteImage = (filename) =>
+  new Promise((resolve, reject) => {
+    bucket
+      .file(filename)
+      .delete()
+      .then(() => {
+        resolve(true);
+      })
+      .catch(() => {
+        reject(false);
+      });
+  });
