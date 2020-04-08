@@ -2,15 +2,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const jsonWebToken = require("./src/helper/jsonwebtoken");
+const configs = require("./src/configs/config");
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-const configs = require("./src/configs/config");
 const port = configs.PORT;
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", jsonWebToken.checkToken, (req, res) => {
   res.json({

@@ -3,11 +3,11 @@ const User = require("../models/User.model.js");
 const Product = require("../models/Product.model.js");
 
 const Joi = require("@hapi/joi");
+const uploadImage = require("../helper/fileUploader");
 
 const productSchemaValidator = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
-  images: Joi.array().items(Joi.string()).required(),
   condition: Joi.number().required(),
   price: Joi.number().required(),
   storyRating: Joi.number().required(),
@@ -21,19 +21,36 @@ exports.create = async (req, res) => {
     return res.status(400).send(response.error);
   } else {
     let product = new Product(req.body);
-    product
-      .save()
+    let files = req.files;
+    let promises = files.map(async (item, key) => {
+      let name = product.id + "_" + key + ".jpg";
+      item.originalname = name;
+      let imageUploading = await uploadImage(item);
+      return imageUploading;
+    });
+    Promise.all(promises)
       .then((response) => {
-        res.status(200).send({
-          success: true,
-          message:
-            "Your product has been submitted, please wait for it to be published and go live once approved.",
-        });
+        product.images = response;
+        product
+          .save()
+          .then((response) => {
+            res.status(200).send({
+              success: true,
+              message:
+                "Your product has been submitted, please wait for it to be published and go live once approved.",
+            });
+          })
+          .catch((error) => {
+            res.status(500).send({
+              success: false,
+              message: "Some error occurred while signing you up.",
+            });
+          });
       })
       .catch((error) => {
         res.status(500).send({
           success: false,
-          message: "Some error occurred while signing you up.",
+          message: error,
         });
       });
   }
