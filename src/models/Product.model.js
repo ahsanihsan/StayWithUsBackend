@@ -8,7 +8,7 @@ const ProductSchema = mongoose.Schema(
     condition: Number,
     price: Number,
     storyRating: Number,
-    views: Number,
+    views: { type: Number, default: 0 },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     isSold: { type: Boolean, default: false },
     isApproved: { type: Boolean, default: false },

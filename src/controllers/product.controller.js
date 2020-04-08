@@ -48,6 +48,10 @@ exports.findAll = (req, res) => {
       populate: {
         path: "reviews",
         select: { _id: 1, createdAt: 1, comment: 1, rating: 1 },
+        populate: {
+          path: "author",
+          select: { _id: 1, name: 1, psn: 1 },
+        },
       },
     })
     .then((data) => {
