@@ -15,4 +15,5 @@ module.exports = (app) => {
 
   // Retrieve all product
   app.get("/product", product.findAll);
+  app.get("/product/featured", product.findFeaturedProducts);
 };

@@ -14,16 +14,30 @@ const productSchemaValidator = Joi.object({
   seller: Joi.string().required(),
 });
 
+const productSeriaizedData = {
+  path: "seller",
+  select: { _id: 1, name: 1, psn: 1, createdAt: 1, profile_pictrue: 1 },
+  populate: {
+    path: "reviews",
+    select: { _id: 1, createdAt: 1, comment: 1, rating: 1 },
+    populate: {
+      path: "author",
+      select: { _id: 1, name: 1, psn: 1 },
+    },
+  },
+};
+
 // Create and Save a new product
 exports.create = async (req, res) => {
-  let response = productSchemaValidator.validate(req.body);
+  const productData = JSON.parse(req.body.values);
+  let response = productSchemaValidator.validate(productData);
   if (response && response.error) {
     return res.status(400).send(response.error);
   } else {
-    let product = new Product(req.body);
+    let product = new Product(productData);
     let files = req.files;
     let promises = files.map(async (item, key) => {
-      let name = product.id + "_" + key + ".jpg";
+      let name = product.id + "_" + key + ".jpeg";
       item.originalname = name;
       let imageUploading = await uploadImage(item);
       return imageUploading;
@@ -59,18 +73,24 @@ exports.create = async (req, res) => {
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   Product.find()
-    .populate({
-      path: "seller",
-      select: { _id: 1, name: 1, psn: 1, createdAt: 1, profile_pictrue: 1 },
-      populate: {
-        path: "reviews",
-        select: { _id: 1, createdAt: 1, comment: 1, rating: 1 },
-        populate: {
-          path: "author",
-          select: { _id: 1, name: 1, psn: 1 },
-        },
-      },
+    .populate(productSeriaizedData)
+    .then((data) => {
+      res.send({
+        success: true,
+        message: data,
+      });
     })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while fetching the data for you.",
+      });
+    });
+};
+
+exports.findFeaturedProducts = (req, res) => {
+  Product.find({ isFeatured: true })
+    .populate(productSeriaizedData)
     .then((data) => {
       res.send({
         success: true,

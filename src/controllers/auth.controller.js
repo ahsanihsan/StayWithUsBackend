@@ -7,7 +7,7 @@ const schema = Joi.object({
   email: Joi.string()
     .required()
     .error(new Error({ success: false, message: "Email is required " })),
-  password: Joi.string().required()
+  password: Joi.string().required(),
 });
 
 // Logs a user in
@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
     return res.status(400).send(validRequest.error);
   } else {
     const { email, password } = req.body;
-    User.findOne({ email }).then(async response => {
+    User.findOne({ email }).then(async (response) => {
       if (response) {
         let authorised = await helper.decryptPassword(
           password,
@@ -27,18 +27,19 @@ exports.login = async (req, res) => {
           let token = jwt.generateJWT(response);
           return res.send({
             success: true,
-            message: token
+            message: token,
+            userId: response._id,
           });
         } else {
           return res.send({
             success: false,
-            message: "Email or password you entered is not valid."
+            message: "Email or password you entered is not valid.",
           });
         }
       } else {
         return res.send({
           success: false,
-          message: "There is no account associated with this email."
+          message: "There is no account associated with this email.",
         });
       }
     });
