@@ -1,71 +1,68 @@
-const Review = require("../models/Review.model.js");
+const Address = require("../models/Address.model.js");
 const User = require("../models/User.model.js");
-const Product = require("../models/Product.model.js");
 
 const Joi = require("@hapi/joi");
-const uploadImage = require("../helper/fileUploader");
 
-const productSchemaValidator = Joi.object({
-  name: Joi.string().required(),
-  description: Joi.string().required(),
-  condition: Joi.number().required(),
-  price: Joi.number().required(),
-  storyRating: Joi.number().required(),
-  seller: Joi.string().required(),
-  isFeatured: Joi.boolean().required(),
+const addressSchema = Joi.object({
+  addressLine1: Joi.string().required(),
+  addressLine2: Joi.string(),
+  city: Joi.string().required(),
+  province: Joi.string().required(),
+  zipCode: Joi.number().required(),
+  phoneNumber: Joi.string().required(),
+  emailAddress: Joi.string().required(),
+  user: Joi.string().required(),
+  longitude: Joi.number(),
+  latitude: Joi.number(),
 });
 
-const productSeriaizedData = {
-  path: "seller",
-  select: { _id: 1, name: 1, psn: 1, createdAt: 1, profile_pictrue: 1 },
-  populate: {
-    path: "reviews",
-    select: { _id: 1, createdAt: 1, comment: 1, rating: 1 },
-    populate: {
-      path: "author",
-      select: { _id: 1, name: 1, psn: 1 },
-    },
-  },
-};
-
-// Create and Save a new product
+// Create and Save a new user
 exports.create = async (req, res) => {
-  const productData = JSON.parse(req.body.values);
-  let response = productSchemaValidator.validate(productData);
+  let response = addressSchema.validate(req.body);
   if (response && response.error) {
     return res.status(400).send(response.error);
   } else {
-    let product = new Product(productData);
-    let files = req.files;
-    let promises = files.map(async (item, key) => {
-      let name = product.id + "_" + key + ".jpeg";
-      item.originalname = name;
-      let imageUploading = await uploadImage(item);
-      return imageUploading;
-    });
-    Promise.all(promises)
+    let address = new Address(req.body);
+    address
+      .save()
       .then((response) => {
-        product.images = response;
-        product
-          .save()
-          .then((response) => {
-            res.status(200).send({
-              success: true,
-              message:
-                "Your product has been submitted, please wait for it to be published and go live once approved.",
-            });
+        User.findById(req.body.user)
+          .then((record) => {
+            if (record) {
+              record.addresses.push(address._id);
+              record
+                .save()
+                .then((saved) => {
+                  res.status(200).send({
+                    success: true,
+                    message: "Your address has been recorded.",
+                  });
+                })
+                .catch((err) => {
+                  res.status(500).send({
+                    success: false,
+                    message: "Some error occurred while adding your address.",
+                  });
+                });
+            } else {
+              res.status(500).send({
+                success: false,
+                message:
+                  "The user that you are trying to access is no longer available.",
+              });
+            }
           })
-          .catch((error) => {
+          .catch((err) => {
             res.status(500).send({
               success: false,
-              message: "Some error occurred while signing you up.",
+              message: "Some error occurred while adding your address.",
             });
           });
       })
       .catch((error) => {
         res.status(500).send({
           success: false,
-          message: error,
+          message: "Some error occurred while adding your address.",
         });
       });
   }
@@ -73,29 +70,15 @@ exports.create = async (req, res) => {
 
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
-  Product.find()
-    .populate(productSeriaizedData)
+  Address.find({ user: req.params.userId })
+    // .populate("user author")
     .then((data) => {
       res.send({
         success: true,
-        message: data,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you.",
-      });
-    });
-};
-
-exports.findFeaturedProducts = (req, res) => {
-  Product.find({ isFeatured: true })
-    .populate(productSeriaizedData)
-    .then((data) => {
-      res.send({
-        success: true,
-        message: data,
+          data && data.length > 0
+            ? data
+            : "There is no address added by this user.",
       });
     })
     .catch((err) => {

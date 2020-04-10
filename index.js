@@ -24,6 +24,7 @@ app.get("/", jsonWebToken.checkToken, (req, res) => {
 require("./src/routes/user.routes.js")(app);
 require("./src/routes/review.routes.js")(app);
 require("./src/routes/product.routes.js")(app);
+require("./src/routes/address.routes.js")(app);
 
 mongoose.Promise = global.Promise;
 mongoose
