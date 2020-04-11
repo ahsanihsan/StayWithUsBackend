@@ -1,6 +1,7 @@
 const Review = require("../models/Review.model.js");
 const User = require("../models/User.model.js");
 const Product = require("../models/Product.model.js");
+require("../models/Address.model.js");
 
 const Joi = require("@hapi/joi");
 const uploadImage = require("../helper/fileUploader");
@@ -13,6 +14,7 @@ const productSchemaValidator = Joi.object({
   storyRating: Joi.number().required(),
   seller: Joi.string().required(),
   isFeatured: Joi.boolean().required(),
+  address: Joi.string().required(),
 });
 
 const productSeriaizedData = {
@@ -25,6 +27,19 @@ const productSeriaizedData = {
       path: "author",
       select: { _id: 1, name: 1, psn: 1 },
     },
+  },
+};
+const addressSerializedData = {
+  path: "address",
+  select: {
+    _id: 1,
+    addressLine1: 1,
+    addressLine2: 1,
+    city: 1,
+    province: 1,
+    zipCode: 1,
+    phoneNumber: 1,
+    emailAddress: 1,
   },
 };
 
@@ -92,6 +107,7 @@ exports.findAll = (req, res) => {
 exports.findFeaturedProducts = (req, res) => {
   Product.find({ isFeatured: true })
     .populate(productSeriaizedData)
+    .populate(addressSerializedData)
     .then((data) => {
       res.send({
         success: true,

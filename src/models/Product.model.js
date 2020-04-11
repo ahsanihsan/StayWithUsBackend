@@ -13,6 +13,7 @@ const ProductSchema = mongoose.Schema(
     isSold: { type: Boolean, default: false },
     isApproved: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
+    address: { type: mongoose.Schema.Types.ObjectId, ref: "Address" },
   },
   {
     timestamps: true,
