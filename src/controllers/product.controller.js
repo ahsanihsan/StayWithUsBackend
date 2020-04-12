@@ -122,22 +122,24 @@ exports.findFeaturedProducts = (req, res) => {
     });
 };
 
-// // Find a single user with a userId
-// exports.findOne = (req, res) => {
-//   User.findById(req.params.userId)
-//     .then(data => {
-//       res.send({
-//         success: true,
-//         message: data
-//       });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while fetching the data for you."
-//       });
-//     });
-// };
+// // Find a single product with a productId
+exports.findOne = (req, res) => {
+  Product.findById(req.params.productId)
+    .populate(productSeriaizedData)
+    .populate(addressSerializedData)
+    .then((data) => {
+      res.send({
+        success: true,
+        message: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while fetching the data for you.",
+      });
+    });
+};
 
 // // Update a user identified by the userId in the request
 // exports.update = (req, res) => {
