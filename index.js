@@ -2,12 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const jsonWebToken = require("./src/helper/jsonwebtoken");
-const configs = require("./src/configs/config");
 
 const app = express();
-const port = configs.PORT;
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -28,7 +28,7 @@ require("./src/routes/address.routes.js")(app);
 
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(configs.URL, {
+  .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
   })
   .then(() => {
