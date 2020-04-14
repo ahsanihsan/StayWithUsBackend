@@ -28,7 +28,7 @@ require("./src/routes/address.routes.js")(app);
 
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(process.env.MONGODB_URL, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
