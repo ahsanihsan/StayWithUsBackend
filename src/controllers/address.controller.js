@@ -74,7 +74,7 @@ exports.findAll = (req, res) => {
     // .populate("user author")
     .then((data) => {
       res.send({
-        success: true,
+        success: data && data.length > 0 ? true : false,
         message:
           data && data.length > 0
             ? data
