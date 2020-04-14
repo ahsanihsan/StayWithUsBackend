@@ -7,10 +7,16 @@ const multerMid = multer({
     fileSize: 10 * 1024 * 1024,
   },
 });
+const JWT = require("../helper/jsonwebtoken");
 
 module.exports = (app) => {
   // Create a new product
-  app.post("/product", multerMid.array("images"), product.create);
+  app.post(
+    "/product",
+    JWT.checkToken,
+    multerMid.array("images"),
+    product.create
+  );
   // Retrieve all product
   app.get("/product", product.findAll);
   // Retrieve featured products

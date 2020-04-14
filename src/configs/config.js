@@ -6,7 +6,7 @@ module.exports = {
   // JWT CONFIGS
   PRIVATE_KEY: "hellomictesthelloooo",
   ALGORITHM: "RS256",
-  EXPIRY_TIME: "2 days",
+  EXPIRY_TIME: "60000",
   // CONFIGS FOR BUCKET
   BUCKET_NAME: "blurayshop",
   BUCKET_URL: "https://storage.googleapis.com/",

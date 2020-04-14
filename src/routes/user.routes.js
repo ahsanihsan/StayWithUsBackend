@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const user = require("../controllers/user.controller.js");
   const auth = require("../controllers/auth.controller.js");
   const JWT = require("../helper/jsonwebtoken");

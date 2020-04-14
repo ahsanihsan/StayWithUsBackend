@@ -24,7 +24,12 @@ exports.login = async (req, res) => {
           response.password
         );
         if (authorised) {
-          let token = jwt.generateJWT(response);
+          let token = jwt.generateJWT({
+            active: response.active,
+            _id: response._id,
+            email: response.email,
+            userType: response.userType,
+          });
           return res.send({
             success: true,
             message: token,

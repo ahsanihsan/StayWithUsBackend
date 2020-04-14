@@ -1,11 +1,12 @@
-module.exports = app => {
+module.exports = (app) => {
   const review = require("../controllers/reviews.controller.js");
+  const JWT = require("../helper/jsonwebtoken");
 
   // Create a new review
   app.post("/reviews", review.create);
 
   // Retrieve all reviews
-  app.get("/reviews", review.findAll);
+  app.get("/reviews", JWT.checkToken, review.findAll);
 
   // // Retrieve a single user with userId
   // app.get("/users/:userId", user.findOne);
