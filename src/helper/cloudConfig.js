@@ -7,7 +7,7 @@ const serviceKey = path.join(__dirname, "../configs/blurayKey.json");
 
 const storage = new Storage({
   keyFilename: serviceKey,
-  projectId: configs.PROJECT_ID,
+  projectId: "bluray-buy-and-sell", //configs.PROJECT_ID,
 });
 
 module.exports = storage;

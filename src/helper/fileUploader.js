@@ -1,6 +1,6 @@
 const configs = require("../configs/config");
 const gc = require("./cloudConfig");
-const bucket = gc.bucket(configs.BUCKET_NAME);
+const bucket = gc.bucket("blurayshop");
 
 module.exports = uploadImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -9,9 +9,14 @@ module.exports = uploadImage = (file) => {
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
+    console.log("******");
+    console.log(blobStream);
+    console.log("******");
     blobStream
       .on("finish", () => {
-        const publicUrl = `${configs.BUCKET_URL}${bucket.name}/${blob.name}`;
+        const publicUrl = `${"https://storage.googleapis.com/"}${bucket.name}/${
+          blob.name
+        }`;
         resolve(publicUrl);
       })
       .on("error", () => {
