@@ -11,6 +11,7 @@ const userSchema = Joi.object({
   active_ads: Joi.number(),
   total_ads: Joi.number(),
   profile_pictrue: Joi.string(),
+  userType: Joi.string(),
 });
 
 const reviewObjectSchema = {
@@ -30,10 +31,10 @@ exports.create = async (req, res) => {
   } else {
     User.find({ email: req.body.email }).then(async (userRecord) => {
       if (userRecord && userRecord.length > 0) {
-        res.status(500).send({
-          success: true,
+        res.status(200).send({
+          success: false,
           message:
-            "You are already registered with us! Please try resetting your password.",
+            "You are already registered with us! Please try resetting your password or try with a new email.",
         });
       } else {
         let hashPassword = await helper.encryptPassword(req.body.password);
