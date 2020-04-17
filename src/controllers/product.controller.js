@@ -104,6 +104,24 @@ exports.findAll = (req, res) => {
     });
 };
 
+// Retrieve and return all users from the database.
+exports.findUserProducts = (req, res) => {
+  Product.find({ seller: req.params.userId })
+    .populate(productSeriaizedData)
+    .then((data) => {
+      res.send({
+        success: true,
+        message: data,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while fetching the data for you.",
+      });
+    });
+};
+
 exports.findFeaturedProducts = (req, res) => {
   Product.find({ isFeatured: true })
     .populate(productSeriaizedData)
@@ -158,19 +176,19 @@ exports.findOne = (req, res) => {
 //     });
 // };
 
-// // Delete a user with the specified userId in the request
-// exports.delete = (req, res) => {
-//   User.findByIdAndDelete(req.params.userId)
-//     .then(data => {
-//       res.send({
-//         success: true,
-//         message: "User deleted successfully"
-//       });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while fetching the data for you."
-//       });
-//     });
-// };
+// Delete a user with the specified userId in the request
+exports.delete = (req, res) => {
+  Product.findByIdAndDelete(req.params.productId)
+    .then((data) => {
+      res.send({
+        success: true,
+        message: "Product deleted successfully",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while fetching the data for you.",
+      });
+    });
+};
