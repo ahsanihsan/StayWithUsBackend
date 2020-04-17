@@ -13,13 +13,14 @@ const productSchemaValidator = Joi.object({
   price: Joi.number().required(),
   storyRating: Joi.number().required(),
   seller: Joi.string().required(),
-  isFeatured: Joi.boolean().required(),
+  isFeatured: Joi.boolean(),
   address: Joi.string().required(),
+  images: Joi.array().required,
 });
 
 const productSeriaizedData = {
   path: "seller",
-  select: { _id: 1, name: 1, psn: 1, createdAt: 1, profile_pictrue: 1 },
+  select: { _id: 1, name: 1, psn: 1, createdAt: 1, profile_picture: 1 },
   populate: {
     path: "reviews",
     select: { _id: 1, createdAt: 1, comment: 1, rating: 1 },
@@ -90,6 +91,7 @@ exports.create = async (req, res) => {
 exports.findAll = (req, res) => {
   Product.find()
     .populate(productSeriaizedData)
+    .populate(addressSerializedData)
     .then((data) => {
       res.send({
         success: true,

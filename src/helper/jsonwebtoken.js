@@ -19,16 +19,11 @@ exports.decodeJWT = (token) => {
 
 exports.checkToken = (req, res, next) => {
   let token = req.headers["x-access-token"] || req.headers["authorization"];
-  if (token && token.startsWith("Bearer ")) {
-    token = token.slice(7, token.length);
-  } else {
-    return res.status(401).json({
-      success: false,
-      message: "Auth token is not supplied",
-    });
-  }
 
   if (token) {
+    if (token && token.startsWith("Bearer ")) {
+      token = token.slice(7, token.length);
+    }
     jwt.verify(token, configs.PRIVATE_KEY, (err, decoded) => {
       if (err) {
         return res.status(401).json({

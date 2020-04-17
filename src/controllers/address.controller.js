@@ -29,21 +29,28 @@ exports.create = async (req, res) => {
         User.findById(req.body.user)
           .then((record) => {
             if (record) {
-              record.addresses.push(address._id);
-              record
-                .save()
-                .then((saved) => {
-                  res.status(200).send({
-                    success: true,
-                    message: "Your address has been recorded.",
+              if (record.addresses.length < 3) {
+                record.addresses.push(address._id);
+                record
+                  .save()
+                  .then((saved) => {
+                    res.status(200).send({
+                      success: true,
+                      message: "Your address has been recorded.",
+                    });
+                  })
+                  .catch((err) => {
+                    res.status(500).send({
+                      success: false,
+                      message: "Some error occurred while adding your address.",
+                    });
                   });
-                })
-                .catch((err) => {
-                  res.status(500).send({
-                    success: false,
-                    message: "Some error occurred while adding your address.",
-                  });
+              } else {
+                res.status(200).send({
+                  success: false,
+                  message: "You are not allowed to add more than 3 addresses.",
                 });
+              }
             } else {
               res.status(500).send({
                 success: false,

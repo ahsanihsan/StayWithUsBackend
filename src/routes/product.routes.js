@@ -22,9 +22,9 @@ module.exports = (app) => {
   // Retrieve featured products
   app.get("/product/featured", product.findFeaturedProducts);
   // Retrieve users products
-  app.get("/product/:userId", product.findUserProducts);
+  app.get("/product/user/:userId", JWT.checkToken, product.findUserProducts);
   // Retrieve single product using its id
   app.get("/product/:productId", product.findOne);
   // Delete a single product using its id
-  app.delete("/product/:productId", product.delete);
+  app.delete("/product/:productId", JWT.checkToken, product.delete);
 };

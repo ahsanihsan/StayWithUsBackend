@@ -10,7 +10,7 @@ const userSchema = Joi.object({
   phone_number: Joi.string().required(),
   active_ads: Joi.number(),
   total_ads: Joi.number(),
-  profile_pictrue: Joi.string(),
+  profile_picture: Joi.string(),
   userType: Joi.string(),
 });
 

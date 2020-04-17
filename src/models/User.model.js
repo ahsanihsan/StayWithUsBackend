@@ -11,7 +11,7 @@ const UserSchema = mongoose.Schema(
     active_ads: { type: Number, default: 0 },
     total_ads: { type: Number, default: 0 },
     active: { type: Boolean, default: false },
-    profile_pictrue: {
+    profile_picture: {
       type: String,
       default:
         "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200",
