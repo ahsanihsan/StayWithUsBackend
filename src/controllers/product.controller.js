@@ -124,6 +124,70 @@ exports.findUserProducts = (req, res) => {
     });
 };
 
+// Retrieve and return all products that satisfy the incoming query
+exports.queryProducts = (req, res) => {
+  let query = Object.keys(req.body).length > 0 ? req.body : false;
+
+  console.log("******* QUERY PRODUCTS ******");
+  console.log(query);
+  console.log("******* QUERY PRODUCTS ******");
+  if (query) {
+    Product.find()
+      .populate(productSeriaizedData)
+      .populate(addressSerializedData)
+      .then((data) => {
+        let products = [];
+        data.map((item) => {
+          if (query.name && query.city) {
+            if (
+              item.name.includes(query.name) &&
+              query.city === item.address.city
+            ) {
+              products.push(item);
+            }
+          } else if (query.name && !query.city) {
+            if (item.name.includes(query.name)) {
+              products.push(item);
+            }
+          } else if (!query.name && query.city) {
+            if (query.city === item.address.city) {
+              products.push(item);
+            }
+          } else if (!query.name && query.city) {
+            products.push(item);
+          }
+        });
+        res.send({
+          success: true,
+          message: products,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while fetching the data for you.",
+        });
+      });
+  } else {
+    Product.find()
+      .populate(productSeriaizedData)
+      .then((data) => {
+        res.send({
+          success: true,
+          message: data,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message ||
+            "Some error occurred while fetching the data for you.",
+        });
+      });
+  }
+};
+
 exports.findFeaturedProducts = (req, res) => {
   Product.find({ isFeatured: true })
     .populate(productSeriaizedData)

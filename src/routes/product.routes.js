@@ -25,6 +25,8 @@ module.exports = (app) => {
   app.get("/product/user/:userId", JWT.checkToken, product.findUserProducts);
   // Retrieve single product using its id
   app.get("/product/:productId", product.findOne);
+  // Retrieve single product using its id
+  app.post("/product/query", product.queryProducts);
   // Delete a single product using its id
   app.delete("/product/:productId", JWT.checkToken, product.delete);
 };
