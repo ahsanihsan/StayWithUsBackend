@@ -14,7 +14,6 @@ const ProductSchema = mongoose.Schema(
     isApproved: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false },
     address: { type: mongoose.Schema.Types.ObjectId, ref: "Address" },
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
   },
   {
     timestamps: true,
