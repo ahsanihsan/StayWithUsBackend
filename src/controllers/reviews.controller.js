@@ -7,7 +7,7 @@ const reviewSchema = Joi.object({
   rating: Joi.number().required(),
   comment: Joi.string().required(),
   author: Joi.string().required(),
-  user: Joi.string().required()
+  user: Joi.string().required(),
 });
 
 // Create and Save a new user
@@ -19,44 +19,45 @@ exports.create = async (req, res) => {
     let review = new Review(req.body);
     review
       .save()
-      .then(response => {
+      .then((response) => {
         User.findById(req.body.user)
-          .then(record => {
+          .then((record) => {
             if (record) {
               record.reviews.push(review._id);
               record
                 .save()
-                .then(saved => {
+                .then((saved) => {
                   res.status(200).send({
                     success: true,
-                    message: "Your review has been recorded. Thank you."
+                    message: "Your review has been recorded. Thank you.",
                   });
                 })
-                .catch(err => {
+                .catch((err) => {
                   res.status(500).send({
                     success: false,
-                    message: "Some error occurred while submitting your review."
+                    message:
+                      "Some error occurred while submitting your review.",
                   });
                 });
             } else {
               res.status(500).send({
                 success: false,
                 message:
-                  "The user that you are trying to access is no longer available."
+                  "The user that you are trying to access is no longer available.",
               });
             }
           })
-          .catch(err => {
+          .catch((err) => {
             res.status(500).send({
               success: false,
-              message: "Some error occurred while submitting your review."
+              message: "Some error occurred while submitting your review.",
             });
           });
       })
-      .catch(error => {
+      .catch((error) => {
         res.status(500).send({
           success: false,
-          message: "Some error occurred while signing you up."
+          message: "Some error occurred while signing you up.",
         });
       });
   }
@@ -66,16 +67,16 @@ exports.create = async (req, res) => {
 exports.findAll = (req, res) => {
   Review.find()
     .populate("user author")
-    .then(data => {
+    .then((data) => {
       res.send({
         success: true,
-        message: data
+        message: data,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while fetching the data for you."
+          err.message || "Some error occurred while fetching the data for you.",
       });
     });
 };

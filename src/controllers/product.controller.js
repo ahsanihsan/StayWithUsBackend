@@ -30,6 +30,14 @@ const productSeriaizedData = {
     },
   },
 };
+const commentSerializedData = {
+  path: "comments",
+  select: { _id: 1, comment: 1, likes: 1, dislikes: 1, createdAt: 1 },
+  populate: {
+    path: "author",
+    select: { _id: 1, name: 1 },
+  },
+};
 const addressSerializedData = {
   path: "address",
   select: {
@@ -92,6 +100,7 @@ exports.findAll = (req, res) => {
   Product.find()
     .populate(productSeriaizedData)
     .populate(addressSerializedData)
+    .populate(commentSerializedData)
     .then((data) => {
       res.send({
         success: true,
@@ -127,10 +136,6 @@ exports.findUserProducts = (req, res) => {
 // Retrieve and return all products that satisfy the incoming query
 exports.queryProducts = (req, res) => {
   let query = Object.keys(req.body).length > 0 ? req.body : false;
-
-  console.log("******* QUERY PRODUCTS ******");
-  console.log(query);
-  console.log("******* QUERY PRODUCTS ******");
   if (query) {
     Product.find()
       .populate(productSeriaizedData)
