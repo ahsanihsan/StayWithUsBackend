@@ -10,7 +10,7 @@ module.exports = (app) => {
 	app.post("/login", auth.login);
 
 	// Retrieve all users
-	app.get("/users", JWT.checkToken, user.findAll);
+	app.get("/users", user.findAll);
 
 	// Retrieve a single user with userId
 	app.get("/users/:userId", user.findOne);
