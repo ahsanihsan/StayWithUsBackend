@@ -1,4 +1,6 @@
 const User = require("../models/User.model.js");
+const Review = require("../models/Review.model.js");
+const Product = require("../models/Product.model.js");
 const helper = require("../helper/passwords");
 const Joi = require("@hapi/joi");
 
@@ -130,6 +132,57 @@ exports.delete = (req, res) => {
 		})
 		.catch((err) => {
 			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+// Get user report
+exports.userReport = async (req, res) => {
+	User.findById(req.params.userId)
+		.populate(reviewObjectSchema)
+		.then(async (data) => {
+			let report = {};
+			let featuredProducts = await Product.find({
+				isFeatured: true,
+				seller: req.params.userId,
+			});
+			let approvedProducts = await Product.find({
+				isApproved: true,
+				seller: req.params.userId,
+			});
+			let totalProduct = await Product.find({ seller: req.params.userId });
+			let soldProducts = await Product.find({ isSold: true });
+			report.reviews = data.reviews;
+			let averageRating = 0;
+			data.reviews.forEach((item) => {
+				averageRating = averageRating + item.rating;
+			});
+
+			let productViews = totalProduct.map((item) => {
+				return {
+					name: item.name,
+					views: item.views,
+				};
+			});
+
+			report.averageRating = averageRating / data.reviews.length;
+			report.sellerLevel = data.seller_level;
+
+			report.featuredProducts = featuredProducts.length;
+			report.approvedProducts = approvedProducts.length;
+			report.totalProducts = totalProduct.length;
+			report.soldProducts = soldProducts.length;
+			report.productViews = productViews;
+
+			return res.send({
+				success: true,
+				message: report,
+			});
+		})
+		.catch((err) => {
+			res.status(200).send({
 				message:
 					err.message || "Some error occurred while fetching the data for you.",
 			});

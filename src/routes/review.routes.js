@@ -6,7 +6,7 @@ module.exports = (app) => {
 	app.post("/reviews", review.create);
 
 	// Retrieve all reviews
-	app.get("/reviews", JWT.checkToken, review.findAll);
+	app.get("/reviews/:userId", JWT.checkToken, review.findAll);
 
 	// // Retrieve a single user with userId
 	// app.get("/users/:userId", user.findOne);

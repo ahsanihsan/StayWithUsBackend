@@ -20,4 +20,7 @@ module.exports = (app) => {
 
 	// Delete a user with userId
 	app.delete("/users/:userId", JWT.checkToken, user.delete);
+
+	// Delete a user with userId
+	app.get("/report/:userId", JWT.checkToken, user.userReport);
 };
