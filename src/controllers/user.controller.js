@@ -16,6 +16,18 @@ const userSchema = Joi.object({
 	userType: Joi.string(),
 });
 
+const userEditSchema = Joi.object({
+	name: Joi.string().required(),
+	psn: Joi.string().required(),
+	email: Joi.string().required(),
+	password: Joi.string().required(),
+	phone_number: Joi.string().required(),
+	active_ads: Joi.number(),
+	total_ads: Joi.number(),
+	profile_picture: Joi.string(),
+	userType: Joi.string(),
+});
+
 const reviewObjectSchema = {
 	path: "reviews",
 	select: { _id: 1, rating: 1, comment: 1, createdAt: 1 },
