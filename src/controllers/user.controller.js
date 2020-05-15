@@ -133,6 +133,113 @@ exports.update = (req, res) => {
 		});
 };
 
+// Update a user identified by the userId in the request
+exports.updateEmail = (req, res) => {
+	User.findById(req.params.userId)
+		.then(async (response) => {
+			if (response) {
+				let authorised = await helper.decryptPassword(
+					req.body.password,
+					response.password
+				);
+				if (authorised) {
+					User.findByIdAndUpdate(req.params.userId, { email: req.body.email })
+						.then((data) => {
+							res.send({
+								success: true,
+								message: "User email updated successfully",
+							});
+						})
+						.catch((err) => {
+							res.status(500).send({
+								success: false,
+								message:
+									err.message ||
+									"Some error occurred while fetching the data for you.",
+							});
+						});
+				} else {
+					return res.send({
+						success: false,
+						message:
+							"Password you entered is not correct, please enter valid password.",
+					});
+				}
+			} else {
+				return res.send({
+					success: false,
+					message: "There is no such user, please relogin.",
+				});
+			}
+		})
+		.catch((error) => {
+			return res.send({
+				success: false,
+				message: "There is no such user, please relogin.",
+			});
+		});
+};
+
+// Update a user identified by the userId in the request
+exports.updatePassword = (req, res) => {
+	User.findById(req.params.userId)
+		.then(async (response) => {
+			if (response) {
+				let authorised = await helper.decryptPassword(
+					req.body.password,
+					response.password
+				);
+				if (authorised) {
+					let hashPassword = await helper.encryptPassword(
+						req.body.new_password
+					);
+					if (hashPassword) {
+						User.findByIdAndUpdate(req.params.userId, {
+							password: hashPassword,
+						})
+							.then((data) => {
+								res.send({
+									success: true,
+									message: "User password updated successfully",
+								});
+							})
+							.catch((err) => {
+								res.status(500).send({
+									success: false,
+									message:
+										err.message ||
+										"Some error occurred while fetching the data for you.",
+								});
+							});
+					} else {
+						return res.send({
+							success: false,
+							message:
+								"There was a problem while changing your password, please try again later",
+						});
+					}
+				} else {
+					return res.send({
+						success: false,
+						message:
+							"Password you entered is not correct, please enter valid password.",
+					});
+				}
+			} else {
+				return res.send({
+					success: false,
+					message: "There is no such user, please relogin.",
+				});
+			}
+		})
+		.catch((error) => {
+			return res.send({
+				success: false,
+				message: "There is no such user, please relogin.",
+			});
+		});
+};
+
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
 	User.findByIdAndDelete(req.params.userId)

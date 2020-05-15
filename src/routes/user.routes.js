@@ -18,6 +18,12 @@ module.exports = (app) => {
 	// Update a user with userId
 	app.put("/users/:userId", JWT.checkToken, user.update);
 
+	// Update a user with userId
+	app.put("/users/email/:userId", JWT.checkToken, user.updateEmail);
+
+	// Update a user with userId
+	app.put("/users/password/:userId", JWT.checkToken, user.updatePassword);
+
 	// Delete a user with userId
 	app.delete("/users/:userId", JWT.checkToken, user.delete);
 
