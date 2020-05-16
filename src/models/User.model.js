@@ -8,7 +8,7 @@ const UserSchema = mongoose.Schema(
 		email: { type: String, unique: true },
 		password: String,
 		phone_number: String,
-		isBlacklist: { type: Boolean, default: false },
+		isBlackList: { type: Boolean, default: false },
 		seller_level: { type: Number, default: 1 },
 		profile_picture: {
 			type: String,

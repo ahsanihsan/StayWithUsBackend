@@ -19,26 +19,34 @@ exports.login = async (req, res) => {
 		const { email, password } = req.body;
 		User.findOne({ email }).then(async (response) => {
 			if (response) {
-				let authorised = await helper.decryptPassword(
-					password,
-					response.password
-				);
-				if (authorised) {
-					let token = jwt.generateJWT({
-						active: response.active,
-						_id: response._id,
-						email: response.email,
-						userType: response.userType,
-					});
-					return res.send({
-						success: true,
-						message: token,
-						userId: response._id,
-					});
+				if (!response.isBlackList) {
+					let authorised = await helper.decryptPassword(
+						password,
+						response.password
+					);
+					if (authorised) {
+						let token = jwt.generateJWT({
+							isBlackList: response.isBlackList,
+							_id: response._id,
+							email: response.email,
+							userType: response.userType,
+						});
+						return res.send({
+							success: true,
+							message: token,
+							userId: response._id,
+						});
+					} else {
+						return res.send({
+							success: false,
+							message: "Email or password you entered is not valid.",
+						});
+					}
 				} else {
 					return res.send({
 						success: false,
-						message: "Email or password you entered is not valid.",
+						message:
+							"You have been blacklisted by the administrator, please contact our support to log in.",
 					});
 				}
 			} else {
