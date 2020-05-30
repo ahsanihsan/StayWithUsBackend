@@ -24,6 +24,9 @@ module.exports = (app) => {
 	// Update a user with userId
 	app.put("/users/password/:userId", JWT.checkToken, user.updatePassword);
 
+	// Update a user with userId
+	app.put("/users/token/:userId", user.updateToken);
+
 	// Delete a user with userId
 	app.delete("/users/:userId", JWT.checkToken, user.delete);
 

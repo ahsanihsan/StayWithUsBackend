@@ -134,6 +134,23 @@ exports.update = (req, res) => {
 };
 
 // Update a user identified by the userId in the request
+exports.updateToken = (req, res) => {
+	User.findByIdAndUpdate(req.params.userId, req.body)
+		.then((data) => {
+			res.send({
+				success: true,
+				message: "User token updated successfully",
+			});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+// Update a user identified by the userId in the request
 exports.updateEmail = (req, res) => {
 	User.findById(req.params.userId)
 		.then(async (response) => {

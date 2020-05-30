@@ -8,6 +8,7 @@ const UserSchema = mongoose.Schema(
 		email: { type: String, unique: true },
 		password: String,
 		phone_number: String,
+		expoToken: String,
 		isBlackList: { type: Boolean, default: false },
 		seller_level: { type: Number, default: 1 },
 		profile_picture: {
