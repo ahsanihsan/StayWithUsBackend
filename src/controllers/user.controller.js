@@ -1,119 +1,42 @@
 const User = require("../models/User.model.js");
-const Review = require("../models/Review.model.js");
-const Product = require("../models/Product.model.js");
 const helper = require("../helper/passwords");
-const Joi = require("@hapi/joi");
-
-const userSchema = Joi.object({
-	name: Joi.string().required(),
-	psn: Joi.string().required(),
-	email: Joi.string().required(),
-	password: Joi.string().required(),
-	phone_number: Joi.string().required(),
-	active_ads: Joi.number(),
-	total_ads: Joi.number(),
-	profile_picture: Joi.string(),
-	userType: Joi.string(),
-});
-
-const userEditSchema = Joi.object({
-	name: Joi.string().required(),
-	psn: Joi.string().required(),
-	email: Joi.string().required(),
-	password: Joi.string().required(),
-	phone_number: Joi.string().required(),
-	active_ads: Joi.number(),
-	total_ads: Joi.number(),
-	profile_picture: Joi.string(),
-	userType: Joi.string(),
-});
-
-const reviewObjectSchema = {
-	path: "reviews",
-	select: { _id: 1, rating: 1, comment: 1, createdAt: 1 },
-	populate: {
-		path: "author",
-		select: { _id: 1, name: 1, psn: 1 },
-	},
-};
 
 // Create and Save a new user
 exports.create = async (req, res) => {
-	let response = userSchema.validate(req.body);
-	if (response && response.error) {
-		return res.status(400).send(response.error);
-	} else {
-		User.find({ email: req.body.email }).then(async (userRecord) => {
-			if (userRecord && userRecord.length > 0) {
-				res.status(200).send({
-					success: false,
-					message:
-						"You are already registered with us! Please try resetting your password or try with a new email.",
-				});
-			} else {
-				let hashPassword = await helper.encryptPassword(req.body.password);
-				if (hashPassword) {
-					req.body.password = hashPassword;
-					let user = new User(req.body);
-					user
-						.save()
-						.then((data) => {
-							res.send({
-								success: true,
-								message: "You have been registered with us successfuly",
-							});
-						})
-						.catch((err) => {
-							res.status(500).send({
-								message:
-									err.message || "Some error occurred while signing you up.",
-							});
+	User.find({ email: req.body.email }).then(async (userRecord) => {
+		if (userRecord && userRecord.length > 0) {
+			res.status(200).send({
+				success: false,
+				message:
+					"You are already registered with us! Please try resetting your password or try with a new email.",
+			});
+		} else {
+			let hashPassword = await helper.encryptPassword(req.body.password);
+			if (hashPassword) {
+				req.body.password = hashPassword;
+				let user = new User(req.body);
+				user
+					.save()
+					.then((data) => {
+						res.send({
+							success: true,
+							message: "You have been registered with us successfuly",
 						});
-				} else {
-					res.status(500).send({
-						success: false,
-						message: "Some error occurred while signing you up.",
+					})
+					.catch((err) => {
+						res.status(500).send({
+							message:
+								err.message || "Some error occurred while signing you up.",
+						});
 					});
-				}
+			} else {
+				res.status(500).send({
+					success: false,
+					message: "Some error occurred while signing you up.",
+				});
 			}
-		});
-	}
-};
-
-// Retrieve and return all users from the database.
-exports.findAll = (req, res) => {
-	User.find()
-		.populate(reviewObjectSchema)
-		.then((data) => {
-			res.send({
-				success: true,
-				message: data,
-			});
-		})
-		.catch((err) => {
-			res.status(500).send({
-				message:
-					err.message || "Some error occurred while fetching the data for you.",
-			});
-		});
-};
-
-// Find a single user with a userId
-exports.findOne = (req, res) => {
-	User.findById(req.params.userId)
-		.populate(reviewObjectSchema)
-		.then((data) => {
-			res.send({
-				success: true,
-				message: data,
-			});
-		})
-		.catch((err) => {
-			res.status(500).send({
-				message:
-					err.message || "Some error occurred while fetching the data for you.",
-			});
-		});
+		}
+	});
 };
 
 // Update a user identified by the userId in the request
@@ -133,130 +56,6 @@ exports.update = (req, res) => {
 		});
 };
 
-// Update a user identified by the userId in the request
-exports.updateToken = (req, res) => {
-	User.findByIdAndUpdate(req.params.userId, req.body)
-		.then((data) => {
-			res.send({
-				success: true,
-				message: "User token updated successfully",
-			});
-		})
-		.catch((err) => {
-			res.status(500).send({
-				message:
-					err.message || "Some error occurred while fetching the data for you.",
-			});
-		});
-};
-
-// Update a user identified by the userId in the request
-exports.updateEmail = (req, res) => {
-	User.findById(req.params.userId)
-		.then(async (response) => {
-			if (response) {
-				let authorised = await helper.decryptPassword(
-					req.body.password,
-					response.password
-				);
-				if (authorised) {
-					User.findByIdAndUpdate(req.params.userId, { email: req.body.email })
-						.then((data) => {
-							res.send({
-								success: true,
-								message: "User email updated successfully",
-							});
-						})
-						.catch((err) => {
-							res.status(500).send({
-								success: false,
-								message:
-									err.message ||
-									"Some error occurred while fetching the data for you.",
-							});
-						});
-				} else {
-					return res.send({
-						success: false,
-						message:
-							"Password you entered is not correct, please enter valid password.",
-					});
-				}
-			} else {
-				return res.send({
-					success: false,
-					message: "There is no such user, please relogin.",
-				});
-			}
-		})
-		.catch((error) => {
-			return res.send({
-				success: false,
-				message: "There is no such user, please relogin.",
-			});
-		});
-};
-
-// Update a user identified by the userId in the request
-exports.updatePassword = (req, res) => {
-	User.findById(req.params.userId)
-		.then(async (response) => {
-			if (response) {
-				let authorised = await helper.decryptPassword(
-					req.body.password,
-					response.password
-				);
-				if (authorised) {
-					let hashPassword = await helper.encryptPassword(
-						req.body.new_password
-					);
-					if (hashPassword) {
-						User.findByIdAndUpdate(req.params.userId, {
-							password: hashPassword,
-						})
-							.then((data) => {
-								res.send({
-									success: true,
-									message: "User password updated successfully",
-								});
-							})
-							.catch((err) => {
-								res.status(500).send({
-									success: false,
-									message:
-										err.message ||
-										"Some error occurred while fetching the data for you.",
-								});
-							});
-					} else {
-						return res.send({
-							success: false,
-							message:
-								"There was a problem while changing your password, please try again later",
-						});
-					}
-				} else {
-					return res.send({
-						success: false,
-						message:
-							"Password you entered is not correct, please enter valid password.",
-					});
-				}
-			} else {
-				return res.send({
-					success: false,
-					message: "There is no such user, please relogin.",
-				});
-			}
-		})
-		.catch((error) => {
-			return res.send({
-				success: false,
-				message: "There is no such user, please relogin.",
-			});
-		});
-};
-
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
 	User.findByIdAndDelete(req.params.userId)
@@ -268,57 +67,6 @@ exports.delete = (req, res) => {
 		})
 		.catch((err) => {
 			res.status(500).send({
-				message:
-					err.message || "Some error occurred while fetching the data for you.",
-			});
-		});
-};
-
-// Get user report
-exports.userReport = async (req, res) => {
-	User.findById(req.params.userId)
-		.populate(reviewObjectSchema)
-		.then(async (data) => {
-			let report = {};
-			let featuredProducts = await Product.find({
-				isFeatured: true,
-				seller: req.params.userId,
-			});
-			let approvedProducts = await Product.find({
-				isApproved: true,
-				seller: req.params.userId,
-			});
-			let totalProduct = await Product.find({ seller: req.params.userId });
-			let soldProducts = await Product.find({ isSold: true });
-			report.reviews = data.reviews;
-			let averageRating = 0;
-			data.reviews.forEach((item) => {
-				averageRating = averageRating + item.rating;
-			});
-
-			let productViews = totalProduct.map((item) => {
-				return {
-					name: item.name,
-					views: item.views,
-				};
-			});
-
-			report.averageRating = averageRating / data.reviews.length;
-			report.sellerLevel = data.seller_level;
-
-			report.featuredProducts = featuredProducts.length;
-			report.approvedProducts = approvedProducts.length;
-			report.totalProducts = totalProduct.length;
-			report.soldProducts = soldProducts.length;
-			report.productViews = productViews;
-
-			return res.send({
-				success: true,
-				message: report,
-			});
-		})
-		.catch((err) => {
-			res.status(200).send({
 				message:
 					err.message || "Some error occurred while fetching the data for you.",
 			});
