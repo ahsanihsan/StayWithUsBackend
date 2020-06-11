@@ -1,7 +1,7 @@
 const User = require("../models/User.model.js");
+const Property = require("../models/Property.model.js");
 const helper = require("../helper/passwords");
 
-// Create and Save a new user
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
 		if (userRecord && userRecord.length > 0) {
@@ -39,7 +39,6 @@ exports.create = async (req, res) => {
 	});
 };
 
-// Update a user identified by the userId in the request
 exports.update = (req, res) => {
 	User.findByIdAndUpdate(req.params.userId, req.body)
 		.then((data) => {
@@ -56,7 +55,37 @@ exports.update = (req, res) => {
 		});
 };
 
-// Delete a user with the specified userId in the request
+exports.addToWishList = (req, res) => {
+	User.findById(req.body.user)
+		.then((data) => {
+			if (data.wishList.includes(req.body.property)) {
+				let index = data.wishList.findIndex((item) => {
+					return item === req.body.property;
+				});
+				data.wishList.splice(index, 1);
+			} else {
+				data.wishList.push(req.body.property);
+			}
+			data
+				.save()
+				.then(() => {
+					res.send({
+						success: true,
+					});
+				})
+				.catch((error) => {
+					res.send({
+						success: false,
+					});
+				});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				success: false,
+			});
+		});
+};
+
 exports.delete = (req, res) => {
 	User.findByIdAndDelete(req.params.userId)
 		.then((data) => {
@@ -64,6 +93,56 @@ exports.delete = (req, res) => {
 				success: true,
 				message: "User deleted successfully",
 			});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+exports.findAll = (req, res) => {
+	User.find({})
+		.then((data) => {
+			res.send({
+				success: true,
+				message: data,
+			});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+exports.wishList = (req, res) => {
+	User.findById(req.params.id)
+		.populate("wishList")
+		.then((data) => {
+			res.status(200).send({
+				message: data.wishList,
+				success: true,
+			});
+			// if(data.wishList.length > 0){
+			// 	let properties = []
+			// 	data.wishList.forEach(item => {
+			// 		Property.findById(item => {
+			// 			properties
+			// 		})
+			// 	})
+			// 	res.send({
+			// 		success: true,
+			// 		message: []
+			// 	});
+			// }else{
+			// 	res.send({
+			// 		success: true,
+			// 		message: []
+			// 	});
+			// }
 		})
 		.catch((err) => {
 			res.status(500).send({

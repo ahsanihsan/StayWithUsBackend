@@ -11,7 +11,6 @@ const PropertySchema = mongoose.Schema(
 		bathroom: Number,
 		rent: Number,
 		rating: Number,
-		images: [String],
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	},
 	{

@@ -1,7 +1,17 @@
 const Property = require("../models/Property.model.js");
 
 exports.create = async (req, res) => {
+	var base64Data = req.body.image.replace(/^data:image\/png;base64,/, "");
+
 	let property = new Property(req.body);
+	require("fs").writeFile(
+		"src/images/" + property._id + ".jpg",
+		base64Data,
+		"base64",
+		function (err) {
+			console.log(err);
+		}
+	);
 	property
 		.save()
 		.then((response) => {
@@ -14,6 +24,23 @@ exports.create = async (req, res) => {
 			res.status(500).send({
 				success: false,
 				message: "Some error occurred while signing you up.",
+			});
+		});
+};
+
+exports.findSellerProperties = (req, res) => {
+	Property.find({ seller: req.params.id })
+		.populate("seller")
+		.then((data) => {
+			res.send({
+				success: true,
+				message: data,
+			});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
 			});
 		});
 };
