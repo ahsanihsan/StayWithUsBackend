@@ -126,23 +126,6 @@ exports.wishList = (req, res) => {
 				message: data.wishList,
 				success: true,
 			});
-			// if(data.wishList.length > 0){
-			// 	let properties = []
-			// 	data.wishList.forEach(item => {
-			// 		Property.findById(item => {
-			// 			properties
-			// 		})
-			// 	})
-			// 	res.send({
-			// 		success: true,
-			// 		message: []
-			// 	});
-			// }else{
-			// 	res.send({
-			// 		success: true,
-			// 		message: []
-			// 	});
-			// }
 		})
 		.catch((err) => {
 			res.status(500).send({
