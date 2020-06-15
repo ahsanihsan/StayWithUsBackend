@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { any } = require("@hapi/joi");
 
 const PropertySchema = mongoose.Schema(
 	{
@@ -10,7 +11,7 @@ const PropertySchema = mongoose.Schema(
 		kitchen: Number,
 		bathroom: Number,
 		rent: Number,
-		rating: Number,
+		rating: { type: mongoose.Schema.Types.Mixed, default: [] },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	},
 	{

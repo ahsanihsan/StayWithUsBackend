@@ -79,6 +79,61 @@ exports.findOne = (req, res) => {
 		});
 };
 
+exports.setRating = (req, res) => {
+	Property.findById(req.body.property)
+		.then((data) => {
+			if (data) {
+				if (data.rating && data.rating.length > 0) {
+					let index = data.rating.findIndex(
+						(item) => item.userId === req.body.user
+					);
+					if (index != -1) {
+						data.rating[index].rating = req.body.rating;
+					} else {
+						data.rating.push({
+							rating: req.body.rating,
+							userId: req.body.user,
+						});
+					}
+				} else {
+					data.rating.push({
+						rating: req.body.rating,
+						userId: req.body.user,
+					});
+				}
+				data.markModified("rating");
+				data
+					.save()
+					.then((response) => {
+						return res.send({
+							success: true,
+							message: response,
+						});
+					})
+					.catch((error) => {
+						return res.send({
+							success: false,
+							message: data,
+						});
+					});
+			} else {
+				return res.send({
+					success: false,
+					message: false,
+				});
+			}
+		})
+		.catch((err) => {
+			console.log("******");
+			console.log(err);
+			console.log("******");
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
 exports.update = (req, res) => {
 	Property.findByIdAndUpdate(req.params.id, req.body)
 		.then((data) => {
