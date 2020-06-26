@@ -9,4 +9,5 @@ module.exports = (app) => {
 	app.get("/users", user.findAll);
 	app.post("/users/wishlist", user.addToWishList);
 	app.get("/users/wishlist/:id", user.wishList);
+	app.post("/users/reset", user.requestResetPassword);
 };

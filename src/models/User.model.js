@@ -7,6 +7,7 @@ const UserSchema = mongoose.Schema(
 		email: { type: String, unique: true },
 		password: String,
 		phone_number: String,
+		passwordResetCode: String,
 		wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Property" }],
 	},
 	{

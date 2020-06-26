@@ -1,6 +1,7 @@
 const User = require("../models/User.model.js");
 const Property = require("../models/Property.model.js");
 const helper = require("../helper/passwords");
+const { sendEmail } = require("./mailer.js");
 
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
@@ -126,6 +127,49 @@ exports.wishList = (req, res) => {
 				message: data.wishList,
 				success: true,
 			});
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+exports.requestResetPassword = (req, res) => {
+	User.find({ email: req.body.email })
+		.then((data) => {
+			if (data && data.length > 0) {
+				let randomNumber = Math.floor(Math.random() * 90000) + 10000;
+				let user = data[0];
+				user.passwordResetCode = randomNumber;
+
+				user
+					.save()
+					.then(async (res) => {
+						let emailResponse = await sendEmail(user.email, randomNumber);
+						if (emailResponse) {
+							res.status(200).send({
+								message:
+									"An email has been sent to your account. Please check your inbox and enter your 5 digits code to reset your password.",
+								success: true,
+							});
+						} else {
+							res.status(200).send({
+								message:
+									"There was a problem sending you an email. Please contact the administrator",
+								success: false,
+							});
+						}
+					})
+					.catch((error) => {
+						res.status(200).send({
+							message: "Email you entered does not belong to any account.",
+							success: false,
+						});
+					});
+			} else {
+			}
 		})
 		.catch((err) => {
 			res.status(500).send({
