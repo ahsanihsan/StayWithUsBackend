@@ -2,6 +2,7 @@ const User = require("../models/User.model.js");
 const Property = require("../models/Property.model.js");
 const helper = require("../helper/passwords");
 const { sendEmail } = require("./mailer.js");
+const e = require("express");
 
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
@@ -136,6 +137,63 @@ exports.wishList = (req, res) => {
 		});
 };
 
+exports.userVerify = (req, res) => {
+	User.find({ email: req.body.email }).then((data) => {
+		if (data && data.length > 0) {
+			if (data[0].passwordResetCode === req.body.resetCode) {
+				res.status(200).send({
+					message: "Please enter new password to reset",
+					success: true,
+				});
+			} else {
+				res.status(200).send({
+					message: "Reset code you entered is not correct.",
+					success: false,
+				});
+			}
+		} else {
+			res.status(200).send({
+				message: "Reset code you entered is not correct.",
+				success: false,
+			});
+		}
+	});
+};
+
+exports.changePassword = (req, res) => {
+	User.find({ email: req.body.email }).then(async (data) => {
+		if (data && data.length > 0) {
+			let user = data[0];
+			let hashPassword = await helper.encryptPassword(req.body.newPassword);
+			if (hashPassword) {
+				user.password = hashPassword;
+				user
+					.save()
+					.then((data) => {
+						res.send({
+							success: true,
+							message: "Your password has been changed successfuly",
+						});
+					})
+					.catch((err) => {
+						res.send({
+							message:
+								err.message ||
+								"Some error occurred while changing your password.",
+							message: false,
+						});
+					});
+			} else {
+				res.send({
+					message:
+						err.message || "Some error occurred while changing your password.",
+					message: false,
+				});
+			}
+		}
+	});
+};
+
 exports.requestResetPassword = (req, res) => {
 	User.find({ email: req.body.email })
 		.then((data) => {
@@ -146,7 +204,7 @@ exports.requestResetPassword = (req, res) => {
 
 				user
 					.save()
-					.then(async (res) => {
+					.then(async (responseUpper) => {
 						let emailResponse = await sendEmail(user.email, randomNumber);
 						if (emailResponse) {
 							res.status(200).send({
@@ -169,6 +227,10 @@ exports.requestResetPassword = (req, res) => {
 						});
 					});
 			} else {
+				res.status(200).send({
+					message: "Email you entered does not belong to any account.",
+					success: false,
+				});
 			}
 		})
 		.catch((err) => {

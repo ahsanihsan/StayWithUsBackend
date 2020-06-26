@@ -12,7 +12,7 @@ var transporter = nodemailer.createTransport({
 
 exports.sendEmail = async (userEmail, userCode) => {
 	var mailOptions = {
-		from: "admin@staywithus.com",
+		from: "info@ahsanihsan.com",
 		to: userEmail,
 		subject: "Password Reset Stay With Us",
 		text:

@@ -10,4 +10,6 @@ module.exports = (app) => {
 	app.post("/users/wishlist", user.addToWishList);
 	app.get("/users/wishlist/:id", user.wishList);
 	app.post("/users/reset", user.requestResetPassword);
+	app.post("/users/verify", user.userVerify);
+	app.post("/users/change-password", user.changePassword);
 };
