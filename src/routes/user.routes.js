@@ -5,8 +5,9 @@ module.exports = (app) => {
 
 	app.post("/users", user.create);
 	app.post("/login", auth.login);
-	app.put("/users/:userId", JWT.checkToken, user.update);
+	app.put("/users/:userId", user.update);
 	app.get("/users", user.findAll);
+	app.get("/users/:id", user.findOne);
 	app.post("/users/wishlist", user.addToWishList);
 	app.get("/users/wishlist/:id", user.wishList);
 	app.post("/users/reset", user.requestResetPassword);

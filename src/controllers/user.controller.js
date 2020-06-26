@@ -1,8 +1,6 @@
 const User = require("../models/User.model.js");
-const Property = require("../models/Property.model.js");
 const helper = require("../helper/passwords");
 const { sendEmail } = require("./mailer.js");
-const e = require("express");
 
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
@@ -44,10 +42,20 @@ exports.create = async (req, res) => {
 exports.update = (req, res) => {
 	User.findByIdAndUpdate(req.params.userId, req.body)
 		.then((data) => {
-			res.send({
-				success: true,
-				message: "User updated successfully",
-			});
+			User.findById(req.params.userId)
+				.then((response) => {
+					res.send({
+						success: true,
+						message: response,
+					});
+				})
+				.catch((err) => {
+					res.status(500).send({
+						message:
+							err.message ||
+							"Some error occurred while fetching the data for you.",
+					});
+				});
 		})
 		.catch((err) => {
 			res.status(500).send({
@@ -116,6 +124,22 @@ exports.findAll = (req, res) => {
 			res.status(500).send({
 				message:
 					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
+exports.findOne = (req, res) => {
+	User.findById(req.params.id)
+		.then((data) => {
+			res.send({
+				success: true,
+				message: data,
+			});
+		})
+		.catch((err) => {
+			res.send({
+				message: "Some error occurred while fetching the data for you.",
+				success: false,
 			});
 		});
 };
