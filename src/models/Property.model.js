@@ -5,6 +5,7 @@ const PropertySchema = mongoose.Schema(
 		name: String,
 		description: String,
 		address: String,
+		images: [String],
 		area: Number,
 		bedroom: Number,
 		kitchen: Number,
@@ -17,6 +18,7 @@ const PropertySchema = mongoose.Schema(
 		dinnerCost: { type: Number, default: 0 },
 		rating: { type: mongoose.Schema.Types.Mixed, default: [] },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+		bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
 	},
 	{
 		timestamps: true,
