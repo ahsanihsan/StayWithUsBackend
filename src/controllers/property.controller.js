@@ -205,25 +205,11 @@ exports.bookApartment = (req, res) => {
 			let available = false;
 			console.log(propertyBookings.length);
 			for (var i = 0; i < propertyBookings.length; i++) {
-				let Date_1 = moment(propertyBookings[i].checkInDate);
-				let Date_2 = moment(propertyBookings[i].checkOutDate);
+				let checkIn = moment(propertyBookings[i].checkInDate);
+				let checkOut = moment(propertyBookings[i].checkOutDate);
+				let newCheckIn = moment(newBookingCheckIn);
 
-				let Date_to_check = moment(newBookingCheckIn);
-
-				// let D_1 = Date_1.split("-");
-				// let D_2 = Date_2.split("-");
-				// let D_3 = Date_to_check.split("-");
-
-				// var d1 = new Date(D_1[2], parseInt(D_1[1]) - 1, D_1[0]);
-				// var d2 = new Date(D_2[2], parseInt(D_2[1]) - 1, D_2[0]);
-				// var d3 = new Date(D_3[2], parseInt(D_3[1]) - 1, D_3[0]);
-				// console.log("***** HMMMM *****");
-				// console.log("******* d1 ", d1);
-				// console.log("******* d2 ", d2);
-				// console.log("******* d3 ", d3);
-				// console.log("***** HMMMM *****");
-
-				if (Date_to_check < Date_2 && Date_to_check > Date_1) {
+				if (newCheckIn >= checkIn && newCheckIn <= checkOut) {
 					available = false;
 					break;
 				} else {
