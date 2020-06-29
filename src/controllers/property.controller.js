@@ -178,23 +178,12 @@ exports.delete = (req, res) => {
 };
 
 exports.bookApartment = (req, res) => {
-	// Property.findById(req.params.id)
-	// 	.then((data) => {
-
-	// 	})
-	// 	.catch((err) => {
-	// 		res.status(500).send({
-	// 			message:
-	// 				err.message || "Some error occurred while fetching the data for you.",
-	// 		});
-	// 	});
 	Booking.find({})
 		.then((response) => {
 			let property = req.body.property;
 			let propertyBookings = [];
 
 			let newBookingCheckIn = req.body.checkInDate;
-			let newBookingCheckOut = req.body.checkOutDate;
 
 			response.map((item) => {
 				if (item.property == property) {
@@ -203,18 +192,21 @@ exports.bookApartment = (req, res) => {
 			});
 
 			let available = false;
-			console.log(propertyBookings.length);
-			for (var i = 0; i < propertyBookings.length; i++) {
-				let checkIn = moment(propertyBookings[i].checkInDate);
-				let checkOut = moment(propertyBookings[i].checkOutDate);
-				let newCheckIn = moment(newBookingCheckIn);
+			if (propertyBookings.length > 0) {
+				for (var i = 0; i < propertyBookings.length; i++) {
+					let checkIn = moment(propertyBookings[i].checkInDate);
+					let checkOut = moment(propertyBookings[i].checkOutDate);
+					let newCheckIn = moment(newBookingCheckIn);
 
-				if (newCheckIn >= checkIn && newCheckIn <= checkOut) {
-					available = false;
-					break;
-				} else {
-					available = true;
+					if (newCheckIn >= checkIn && newCheckIn <= checkOut) {
+						available = false;
+						break;
+					} else {
+						available = true;
+					}
 				}
+			} else {
+				available = true;
 			}
 			if (available) {
 				let newBooking = new Booking(req.body);
@@ -238,7 +230,7 @@ exports.bookApartment = (req, res) => {
 			} else {
 				res.send({
 					message:
-						"Apartment is already booked on the date you are trying to book on.",
+						"Apartment is already booked on the date you are trying to book on. Please change your date.",
 					success: false,
 				});
 			}
@@ -248,7 +240,31 @@ exports.bookApartment = (req, res) => {
 				message:
 					error.message ||
 					"Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
 
+exports.bookingRequests = (req, res) => {
+	Booking.find({})
+		.then((response) => {
+			let seller = req.params.sellerId;
+			let properties = [];
+			response.forEach((item) => {
+				if (item.seller == seller) {
+					properties.push(item);
+				}
+			});
+			res.send({
+				message: properties,
+				success: true,
+			});
+		})
+		.catch((error) => {
+			res.send({
+				message:
+					error.message ||
+					"Some error occurred while fetching the data for you.",
 				success: false,
 			});
 		});
