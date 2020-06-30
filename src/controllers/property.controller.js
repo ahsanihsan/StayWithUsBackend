@@ -246,7 +246,7 @@ exports.bookApartment = (req, res) => {
 };
 
 exports.bookingRequests = (req, res) => {
-	Booking.find({})
+	Booking.find()
 		.then((response) => {
 			let seller = req.params.sellerId;
 			let properties = [];
@@ -257,6 +257,31 @@ exports.bookingRequests = (req, res) => {
 			});
 			res.send({
 				message: properties,
+				success: true,
+			});
+		})
+		.catch((error) => {
+			res.send({
+				message:
+					error.message ||
+					"Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
+
+exports.changeBookingRequest = (req, res) => {
+	let bookingId = req.params.bookingId;
+	let requestedChange = req.body.change;
+	Booking.findById(bookingId)
+		.then((response) => {
+			if (requestedChange === "approved") {
+				response.approved = true;
+			} else {
+				response.rejected = false;
+			}
+			res.send({
+				message: "Requested changes have been made.",
 				success: true,
 			});
 		})

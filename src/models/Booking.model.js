@@ -11,6 +11,7 @@ const BookingSchema = mongoose.Schema(
 		dinnerCost: { type: Number, default: 0 },
 		misc: { type: Number, default: 0 },
 		approved: { type: Boolean, default: false },
+		rejected: { type: Boolean, default: false },
 		property: { type: mongoose.Schema.Types.ObjectId, ref: "Property" },
 		buyer: { type: mongoose.Schema.Types.ObjectId, ref: "Buyer" },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "Seller" },
