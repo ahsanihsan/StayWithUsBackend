@@ -12,6 +12,7 @@ const BookingSchema = mongoose.Schema(
 		misc: { type: Number, default: 0 },
 		approved: { type: Boolean, default: false },
 		rejected: { type: Boolean, default: false },
+		cancelled: { type: Boolean, default: false },
 		property: { type: mongoose.Schema.Types.ObjectId, ref: "Property" },
 		buyer: { type: mongoose.Schema.Types.ObjectId, ref: "Buyer" },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "Seller" },

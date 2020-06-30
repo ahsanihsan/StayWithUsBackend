@@ -186,7 +186,7 @@ exports.bookApartment = (req, res) => {
 			let newBookingCheckIn = req.body.checkInDate;
 
 			response.map((item) => {
-				if (item.property == property) {
+				if (item.property == property && !item.cancelled) {
 					propertyBookings.push(item);
 				}
 			});
@@ -251,7 +251,12 @@ exports.bookingRequests = (req, res) => {
 			let seller = req.params.sellerId;
 			let properties = [];
 			response.forEach((item) => {
-				if (item.seller == seller) {
+				if (
+					item.seller == seller &&
+					!item.approved &&
+					!item.rejected &&
+					!item.cancelled
+				) {
 					properties.push(item);
 				}
 			});
@@ -270,18 +275,18 @@ exports.bookingRequests = (req, res) => {
 		});
 };
 
-exports.changeBookingRequest = (req, res) => {
-	let bookingId = req.params.bookingId;
-	let requestedChange = req.body.change;
-	Booking.findById(bookingId)
+exports.bookingRequestsApproved = (req, res) => {
+	Booking.find()
 		.then((response) => {
-			if (requestedChange === "approved") {
-				response.approved = true;
-			} else {
-				response.rejected = false;
-			}
+			let seller = req.params.sellerId;
+			let properties = [];
+			response.forEach((item) => {
+				if (item.seller == seller && item.approved && !item.cancelled) {
+					properties.push(item);
+				}
+			});
 			res.send({
-				message: "Requested changes have been made.",
+				message: properties,
 				success: true,
 			});
 		})
@@ -293,4 +298,87 @@ exports.changeBookingRequest = (req, res) => {
 				success: false,
 			});
 		});
+};
+
+exports.cancelOrder = (req, res) => {
+	Booking.findById(req.params.bookingId)
+		.then((response) => {
+			response.cancelled = true;
+			response
+				.save()
+				.then((respsoososo) => {
+					res.send({
+						message: "Your order has been cancelled",
+						success: true,
+					});
+				})
+				.catch((erororor) => {
+					res.send({
+						message:
+							"There was a problem cancelling your request. Please try again later.",
+						success: false,
+					});
+				});
+		})
+		.catch((error) => {
+			res.send({
+				message:
+					error.message ||
+					"Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
+
+exports.changeBookingRequest = (req, res) => {
+	let bookingId = req.params.bookingId;
+	let requestedChange = req.body.change;
+	if (requestedChange === "declined") {
+		Booking.findByIdAndDelete(bookingId)
+			.then((response) => {
+				res.send({
+					message: "Requested changes have been made.",
+					success: true,
+				});
+			})
+			.catch((error) => {
+				res.send({
+					message:
+						error.message ||
+						"Some error occurred while fetching the data for you.",
+					success: false,
+				});
+			});
+	} else {
+		Booking.findById(bookingId)
+			.then((response) => {
+				if (requestedChange === "approved") {
+					response.approved = true;
+				} else {
+					response.rejected = true;
+				}
+				response
+					.save()
+					.then((ressss) => {
+						res.send({
+							message: "Requested changes have been made.",
+							success: true,
+						});
+					})
+					.catch((error) => {
+						res.send({
+							message: "Unable to change the data",
+							success: false,
+						});
+					});
+			})
+			.catch((error) => {
+				res.send({
+					message:
+						error.message ||
+						"Some error occurred while fetching the data for you.",
+					success: false,
+				});
+			});
+	}
 };
