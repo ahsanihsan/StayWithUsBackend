@@ -185,6 +185,7 @@ exports.delete = (req, res) => {
 
 exports.bookApartment = (req, res) => {
 	Booking.find({})
+		.populate("buyer")
 		.then((response) => {
 			let property = req.body.property;
 			let propertyBookings = [];
@@ -192,7 +193,7 @@ exports.bookApartment = (req, res) => {
 			let newBookingCheckIn = req.body.checkInDate;
 
 			response.map((item) => {
-				if (item.property == property && !item.cancelled) {
+				if (item.property == property && !item.cancelled && item.buyer.active) {
 					propertyBookings.push(item);
 				}
 			});
