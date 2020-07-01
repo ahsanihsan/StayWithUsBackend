@@ -8,6 +8,7 @@ const UserSchema = mongoose.Schema(
 		password: String,
 		phone_number: String,
 		passwordResetCode: String,
+		active: { type: Boolean, default: true },
 		wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Property" }],
 	},
 	{

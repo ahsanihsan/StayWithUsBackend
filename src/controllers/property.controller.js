@@ -275,6 +275,36 @@ exports.bookingRequests = (req, res) => {
 		});
 };
 
+exports.bookingRequestsBuyer = (req, res) => {
+	Booking.find()
+		.then((response) => {
+			let buyer = req.params.buyerId;
+			let properties = [];
+			response.forEach((item) => {
+				if (
+					item.buyer == buyer &&
+					!item.approved &&
+					!item.rejected &&
+					!item.cancelled
+				) {
+					properties.push(item);
+				}
+			});
+			res.send({
+				message: properties,
+				success: true,
+			});
+		})
+		.catch((error) => {
+			res.send({
+				message:
+					error.message ||
+					"Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
+
 exports.bookingRequestsApproved = (req, res) => {
 	Booking.find()
 		.then((response) => {
@@ -282,6 +312,31 @@ exports.bookingRequestsApproved = (req, res) => {
 			let properties = [];
 			response.forEach((item) => {
 				if (item.seller == seller && item.approved && !item.cancelled) {
+					properties.push(item);
+				}
+			});
+			res.send({
+				message: properties,
+				success: true,
+			});
+		})
+		.catch((error) => {
+			res.send({
+				message:
+					error.message ||
+					"Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
+
+exports.bookingRequestsApprovedBuyer = (req, res) => {
+	Booking.find()
+		.then((response) => {
+			let buyer = req.params.buyerId;
+			let properties = [];
+			response.forEach((item) => {
+				if (item.buyer == buyer && item.approved && !item.cancelled) {
 					properties.push(item);
 				}
 			});

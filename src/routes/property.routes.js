@@ -9,7 +9,12 @@ module.exports = (app) => {
 		property.changeBookingRequest
 	);
 	app.get("/property/booked/:sellerId", property.bookingRequestsApproved);
+	app.get(
+		"/property/booked/buyer/:buyerId",
+		property.bookingRequestsApprovedBuyer
+	);
 	app.get("/property/booking/:sellerId", property.bookingRequests);
+	app.get("/property/booking/buyer/:buyerId", property.bookingRequestsBuyer);
 	app.get("/property", property.findAll);
 	app.get("/property/seller/:id", property.findSellerProperties);
 	app.get("/property/:id", property.findOne);
