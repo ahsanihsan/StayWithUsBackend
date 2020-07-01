@@ -144,6 +144,34 @@ exports.findOne = (req, res) => {
 		});
 };
 
+exports.deactivateAccount = (req, res) => {
+	User.findById(req.params.id)
+		.then((data) => {
+			data.active = false;
+			data
+				.save()
+				.then((response) => {
+					res.send({
+						success: true,
+						message: "Your account has been de activated successfully",
+					});
+				})
+				.catch((error) => {
+					res.send({
+						success: true,
+						message:
+							"There was a problem de activating your account. Please try again later.",
+					});
+				});
+		})
+		.catch((err) => {
+			res.send({
+				message: "Some error occurred while fetching the data for you.",
+				success: false,
+			});
+		});
+};
+
 exports.wishList = (req, res) => {
 	User.findById(req.params.id)
 		.populate("wishList")

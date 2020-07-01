@@ -8,6 +8,7 @@ module.exports = (app) => {
 	app.put("/users/:userId", user.update);
 	app.get("/users", user.findAll);
 	app.get("/users/:id", user.findOne);
+	app.get("/users/deactivate/:id", user.deactivateAccount);
 	app.post("/users/wishlist", user.addToWishList);
 	app.get("/users/wishlist/:id", user.wishList);
 	app.post("/users/reset", user.requestResetPassword);
