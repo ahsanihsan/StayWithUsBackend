@@ -60,9 +60,15 @@ exports.findAll = (req, res) => {
 	Property.find()
 		.populate("seller")
 		.then((data) => {
+			let properties = [];
+			data.forEach((item) => {
+				if (item.seller.active) {
+					properties.push(item);
+				}
+			});
 			res.send({
 				success: true,
-				message: data,
+				message: properties,
 			});
 		})
 		.catch((err) => {

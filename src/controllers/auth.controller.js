@@ -19,12 +19,17 @@ exports.login = async (req, res) => {
 					email: response.email,
 					userType: response.userType,
 				});
-
-				return res.send({
-					success: true,
-					message: token,
-					user: response,
-				});
+				response.active = true;
+				response
+					.save()
+					.then(() => {
+						return res.send({
+							success: true,
+							message: token,
+							user: response,
+						});
+					})
+					.catch((erroadfa) => {});
 			} else {
 				return res.send({
 					success: false,
