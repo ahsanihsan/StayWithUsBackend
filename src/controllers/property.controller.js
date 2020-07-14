@@ -193,7 +193,13 @@ exports.bookApartment = (req, res) => {
 			let newBookingCheckIn = req.body.checkInDate;
 
 			response.map((item) => {
-				if (item.property == property && !item.cancelled && item.buyer.active) {
+				if (
+					item &&
+					item.buyer &&
+					item.property == property &&
+					!item.cancelled &&
+					item.buyer.active
+				) {
 					propertyBookings.push(item);
 				}
 			});

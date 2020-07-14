@@ -20,6 +20,7 @@ exports.login = async (req, res) => {
 					userType: response.userType,
 				});
 				response.active = true;
+				response.pushNotificationToken = req.body.pushNotificationToken;
 				response
 					.save()
 					.then(() => {
