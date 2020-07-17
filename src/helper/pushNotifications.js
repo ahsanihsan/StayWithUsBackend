@@ -23,7 +23,6 @@ exports.handlePushTokens = (title, body, token) => {
 		for (let chunk of chunks) {
 			try {
 				let receipts = await expo.sendPushNotificationsAsync(chunk);
-				console.log(receipts);
 			} catch (error) {
 				console.error(error);
 			}

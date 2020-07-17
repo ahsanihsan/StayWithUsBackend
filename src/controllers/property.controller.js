@@ -4,6 +4,10 @@ var moment = require("moment");
 
 exports.create = async (req, res) => {
 	let allImages = req.body.images;
+	let breakfastImages = req.body.breakfastImages;
+	let lunchImages = req.body.lunchImages;
+	let dinnerImages = req.body.dinnerImages;
+	let vehicleImages = req.body.vehicleImages;
 
 	let property = new Property(req.body);
 
@@ -15,11 +19,63 @@ exports.create = async (req, res) => {
 				"src/images/" + property._id + "_" + index + ".jpg",
 				base64Data,
 				"base64",
-				function (err) {
-					console.log(err);
-				}
+				function (err) {}
 			);
 			property.images[index] = property._id + "_" + index + ".jpg";
+		}
+	});
+	breakfastImages.map((item, index) => {
+		if (item) {
+			var base64Data = item.replace(/^data:image\/png;base64,/, "");
+
+			require("fs").writeFile(
+				"src/images/" + property._id + "_" + index + "_breakfast.jpg",
+				base64Data,
+				"base64",
+				function (err) {}
+			);
+			property.breakfastImages[index] =
+				property._id + "_" + index + "_breakfast.jpg";
+		}
+	});
+	lunchImages.map((item, index) => {
+		if (item) {
+			var base64Data = item.replace(/^data:image\/png;base64,/, "");
+
+			require("fs").writeFile(
+				"src/images/" + property._id + "_" + index + "_lunch.jpg",
+				base64Data,
+				"base64",
+				function (err) {}
+			);
+			property.lunchImages[index] = property._id + "_" + index + "_lunch.jpg";
+		}
+	});
+	dinnerImages.map((item, index) => {
+		if (item) {
+			var base64Data = item.replace(/^data:image\/png;base64,/, "");
+
+			require("fs").writeFile(
+				"src/images/" + property._id + "_" + index + "_dinner.jpg",
+				base64Data,
+				"base64",
+				function (err) {}
+			);
+			property.dinnerImages[index] = property._id + "_" + index + "_dinner.jpg";
+		}
+	});
+	vehicleImages.map((item, index) => {
+		if (item) {
+			var base64Data = item.replace(/^data:image\/png;base64,/, "");
+
+			require("fs").writeFile(
+				"src/images/" + property._id + "_" + index + "_vehicle.jpg",
+				base64Data,
+				"base64",
+				function (err) {}
+			);
+			property.vehicleImages[index] =
+				property._id + "_" + index + "_vehicle.jpg";
 		}
 	});
 
