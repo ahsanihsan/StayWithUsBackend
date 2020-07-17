@@ -11,6 +11,8 @@ const PropertySchema = mongoose.Schema(
 		kitchen: Number,
 		bathroom: Number,
 		rent: Number,
+		longitude: Number,
+		latitude: Number,
 		carParking: { type: Boolean, default: false },
 		meals: { type: Boolean, default: false },
 		breakfastCost: { type: Number, default: 0 },

@@ -260,12 +260,13 @@ exports.bookApartment = (req, res) => {
 
 exports.bookingRequests = (req, res) => {
 	Booking.find()
+		.populate("seller buyer property")
 		.then((response) => {
 			let seller = req.params.sellerId;
 			let properties = [];
 			response.forEach((item) => {
 				if (
-					item.seller == seller &&
+					item.seller._id == seller &&
 					!item.approved &&
 					!item.rejected &&
 					!item.cancelled
@@ -290,12 +291,13 @@ exports.bookingRequests = (req, res) => {
 
 exports.bookingRequestsBuyer = (req, res) => {
 	Booking.find()
+		.populate("seller buyer property")
 		.then((response) => {
 			let buyer = req.params.buyerId;
 			let properties = [];
 			response.forEach((item) => {
 				if (
-					item.buyer == buyer &&
+					item.buyer._id == buyer &&
 					!item.approved &&
 					!item.rejected &&
 					!item.cancelled
@@ -320,6 +322,7 @@ exports.bookingRequestsBuyer = (req, res) => {
 
 exports.bookingRequestsApproved = (req, res) => {
 	Booking.find()
+		.populate("seller buyer property")
 		.then((response) => {
 			let seller = req.params.sellerId;
 			let properties = [];
@@ -345,6 +348,7 @@ exports.bookingRequestsApproved = (req, res) => {
 
 exports.bookingRequestsApprovedBuyer = (req, res) => {
 	Booking.find()
+		.populate("seller buyer property")
 		.then((response) => {
 			let buyer = req.params.buyerId;
 			let properties = [];

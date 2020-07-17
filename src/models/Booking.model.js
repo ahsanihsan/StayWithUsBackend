@@ -15,7 +15,7 @@ const BookingSchema = mongoose.Schema(
 		cancelled: { type: Boolean, default: false },
 		property: { type: mongoose.Schema.Types.ObjectId, ref: "Property" },
 		buyer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-		seller: { type: mongoose.Schema.Types.ObjectId, ref: "Seller" },
+		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 	},
 	{
 		timestamps: true,

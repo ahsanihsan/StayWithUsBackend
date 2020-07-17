@@ -1,6 +1,7 @@
 const User = require("../models/User.model.js");
 const helper = require("../helper/passwords");
 const { sendEmail } = require("./mailer.js");
+const { handlePushTokens } = require("../helper/pushNotifications");
 
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
@@ -243,6 +244,17 @@ exports.changePassword = (req, res) => {
 				});
 			}
 		}
+	});
+};
+
+exports.sendPushNotification = (req, res) => {
+	let title = req.body.title;
+	let body = req.body.body;
+	let token = req.body.token;
+	handlePushTokens(title, body, token);
+	return res.send({
+		success: true,
+		message: "Notification sent",
 	});
 };
 

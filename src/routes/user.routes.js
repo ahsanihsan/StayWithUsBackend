@@ -14,4 +14,5 @@ module.exports = (app) => {
 	app.post("/users/reset", user.requestResetPassword);
 	app.post("/users/verify", user.userVerify);
 	app.post("/users/change-password", user.changePassword);
+	app.post("/users/notification", user.sendPushNotification);
 };
