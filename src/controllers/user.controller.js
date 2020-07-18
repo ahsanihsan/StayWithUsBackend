@@ -129,6 +129,61 @@ exports.findAll = (req, res) => {
 		});
 };
 
+exports.setRating = (req, res) => {
+	User.findById(req.params.userId)
+		.then((data) => {
+			if (data) {
+				if (data.rating && data.rating.length > 0) {
+					let index = data.rating.findIndex(
+						(item) => item.userId === req.body.user
+					);
+					if (index != -1) {
+						data.rating[index].rating = req.body.rating;
+						data.rating[index].ratingText = req.body.ratingText;
+					} else {
+						data.rating.push({
+							rating: req.body.rating,
+							userId: req.body.user,
+							ratingText: req.body.ratingText,
+						});
+					}
+				} else {
+					data.rating.push({
+						rating: req.body.rating,
+						userId: req.body.user,
+						ratingText: req.body.ratingText,
+					});
+				}
+				data.markModified("rating");
+				data
+					.save()
+					.then((response) => {
+						return res.send({
+							success: true,
+							message: response,
+						});
+					})
+					.catch((error) => {
+						return res.send({
+							success: false,
+							message: data,
+						});
+					});
+			} else {
+				return res.send({
+					success: false,
+					message: false,
+				});
+			}
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message:
+					err.message || "Some error occurred while fetching the data for you.",
+			});
+		});
+};
+
 exports.findOne = (req, res) => {
 	User.findById(req.params.id)
 		.then((data) => {

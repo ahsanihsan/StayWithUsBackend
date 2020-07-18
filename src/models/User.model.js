@@ -10,6 +10,7 @@ const UserSchema = mongoose.Schema(
 		phone_number: String,
 		passwordResetCode: String,
 		active: { type: Boolean, default: true },
+		rating: { type: mongoose.Schema.Types.Mixed, default: [] },
 		wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Property" }],
 	},
 	{

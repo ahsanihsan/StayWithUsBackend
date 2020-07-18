@@ -383,7 +383,8 @@ exports.bookingRequestsApproved = (req, res) => {
 			let seller = req.params.sellerId;
 			let properties = [];
 			response.forEach((item) => {
-				if (item.seller == seller && item.approved && !item.cancelled) {
+				console.log(item);
+				if (item.seller._id == seller && item.approved && !item.cancelled) {
 					properties.push(item);
 				}
 			});
@@ -409,7 +410,7 @@ exports.bookingRequestsApprovedBuyer = (req, res) => {
 			let buyer = req.params.buyerId;
 			let properties = [];
 			response.forEach((item) => {
-				if (item.buyer == buyer && item.approved && !item.cancelled) {
+				if (item.buyer._id == buyer && item.approved && !item.cancelled) {
 					properties.push(item);
 				}
 			});
