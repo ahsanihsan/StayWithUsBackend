@@ -9,6 +9,7 @@ module.exports = (app) => {
 	app.get("/users", user.findAll);
 	app.get("/users/:id", user.findOne);
 	app.get("/users/deactivate/:id", user.deactivateAccount);
+	app.get("/users/deactivate/confirm/:id", user.checkDeactivation);
 	app.post("/users/wishlist", user.addToWishList);
 	app.get("/users/wishlist/:id", user.wishList);
 	app.post("/users/reset", user.requestResetPassword);

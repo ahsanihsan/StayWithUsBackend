@@ -2,6 +2,8 @@ const User = require("../models/User.model.js");
 const helper = require("../helper/passwords");
 const { sendEmail } = require("./mailer.js");
 const { handlePushTokens } = require("../helper/pushNotifications");
+const BookingModel = require("../models/Booking.model.js");
+const moment = require("moment");
 
 exports.create = async (req, res) => {
 	User.find({ email: req.body.email }).then(async (userRecord) => {
@@ -144,7 +146,7 @@ exports.setRating = (req, res) => {
 						data.rating.push({
 							rating: req.body.rating,
 							userId: req.body.user,
-							ratingText: req.body.ratingText,
+							ratingText: req.body.ratringText,
 						});
 					}
 				} else {
@@ -200,25 +202,99 @@ exports.findOne = (req, res) => {
 		});
 };
 
+exports.checkDeactivation = (req, res) => {
+	User.findById(req.params.id).then((data) => {
+		data.active = false;
+		var averageRating = 0;
+		BookingModel.find({})
+			.populate("buyer seller")
+			.then((response) => {
+				response.map((item) => {
+					if (
+						item.buyer._id == req.params.id ||
+						item.seller._id == req.params.id
+					) {
+						let currentTime = moment();
+						let orderEndTime = moment(item.checkOutDate);
+						if (currentTime <= orderEndTime) {
+							averageRating = 2;
+						} else {
+							averageRating = 0;
+						}
+					}
+					if (averageRating) {
+						return res.send({
+							success: true,
+							message:
+								"Your " +
+								averageRating +
+								" rating will be deducted if you deactivate, because you already have active orders",
+						});
+					} else {
+						return res.send({
+							success: true,
+							message: "Are you sure you want to deactivate your account?",
+						});
+					}
+				});
+			})
+			.catch((error) => {
+				return res.send({
+					success: false,
+					message: "There was a problem de activating your account.",
+				});
+			});
+	});
+};
+
 exports.deactivateAccount = (req, res) => {
 	User.findById(req.params.id)
 		.then((data) => {
 			data.active = false;
-			data
-				.save()
-				.then((response) => {
-					res.send({
+			let averageRating = false;
+			BookingModel.find({}).then((response) => {
+				response.map((item) => {
+					if (
+						item.buyer._id == req.params.id ||
+						item.seller._id == req.params.id
+					) {
+						let currentTime = moment();
+						let orderEndTime = moment(item.checkOutDate);
+						if (currentTime <= orderEndTime) {
+							averageRating = true;
+						} else {
+							averageRating = false;
+						}
+					}
+				});
+				if (averageRating) {
+					data.averageRate = 2 + data.averageRate;
+					return data
+						.save()
+						.then((response) => {
+							return res.send({
+								success: true,
+								message: averageRating
+									? "Your account has been de activated successfully and " +
+									  2 +
+									  " has been deducted because of the active orders"
+									: "Your account has been de activated successfully",
+							});
+						})
+						.catch((error) => {
+							return res.send({
+								success: true,
+								message:
+									"There was a problem de activating your account. Please try again later.",
+							});
+						});
+				} else {
+					return res.send({
 						success: true,
 						message: "Your account has been de activated successfully",
 					});
-				})
-				.catch((error) => {
-					res.send({
-						success: true,
-						message:
-							"There was a problem de activating your account. Please try again later.",
-					});
-				});
+				}
+			});
 		})
 		.catch((err) => {
 			res.send({
