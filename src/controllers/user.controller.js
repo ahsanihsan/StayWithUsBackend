@@ -260,6 +260,7 @@ exports.deactivateAccount = (req, res) => {
 					) {
 						let currentTime = moment();
 						let orderEndTime = moment(item.checkOutDate);
+						BookingModel.findByIdAndDelete(item._id);
 						if (currentTime <= orderEndTime) {
 							averageRating = true;
 						} else {

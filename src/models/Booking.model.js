@@ -13,6 +13,7 @@ const BookingSchema = mongoose.Schema(
 		approved: { type: Boolean, default: false },
 		rejected: { type: Boolean, default: false },
 		cancelled: { type: Boolean, default: false },
+		creditCardInformation: { type: String, default: "" },
 		property: { type: mongoose.Schema.Types.ObjectId, ref: "Property" },
 		buyer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

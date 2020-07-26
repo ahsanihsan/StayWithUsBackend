@@ -23,6 +23,7 @@ const PropertySchema = mongoose.Schema(
 		breakfastCost: { type: Number, default: 0 },
 		lunchCost: { type: Number, default: 0 },
 		dinnerCost: { type: Number, default: 0 },
+		securityFee: { type: Boolean, default: false },
 		rating: { type: mongoose.Schema.Types.Mixed, default: [] },
 		seller: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 		bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
