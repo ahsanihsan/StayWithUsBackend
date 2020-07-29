@@ -11,7 +11,7 @@ const port = process.env.PORT;
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb", extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // bodyParser = {
 // 	json: { limit: "50mb", extended: true },
