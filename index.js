@@ -4,8 +4,6 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const jsonWebToken = require("./src/helper/jsonwebtoken");
-
 const app = express();
 const port = process.env.PORT;
 
