@@ -11,6 +11,7 @@ const PropertySchema = mongoose.Schema(
 		dinnerImages: [String],
 		vehicleImages: [String],
 		vehicle: { type: Boolean, default: false },
+		vehiclePrice: { type: Number, default: 0 },
 		area: Number,
 		bedroom: Number,
 		kitchen: Number,
